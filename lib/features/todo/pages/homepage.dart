@@ -71,12 +71,10 @@ class _HomePage extends ConsumerState<HomePage> with TickerProviderStateMixin {
     return Scaffold(
         bottomNavigationBar: Container(
           height: 35,
-          width: AppConsts.kwidth.w * 0.7,
+          width: AppConsts.kwidth.w,
           alignment: Alignment.center,
-          margin: const EdgeInsets.only(bottom: 5.0, left: 20, right: 20),
           decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(30),
+            color: Color.fromARGB(255, 248, 246, 246),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -87,9 +85,10 @@ class _HomePage extends ConsumerState<HomePage> with TickerProviderStateMixin {
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   icon: index() == 0
-                      ? const Icon(Icons.home_filled, color: Colors.white)
+                      ? const Icon(Icons.home_filled,
+                          color: Color.fromARGB(255, 85, 16, 79))
                       : const Icon(Icons.home,
-                          color: Color.fromARGB(255, 153, 153, 193)),
+                          color: Color.fromARGB(255, 85, 87, 94)),
                   onPressed: () {
                     changePanel(0);
                   },
@@ -100,9 +99,10 @@ class _HomePage extends ConsumerState<HomePage> with TickerProviderStateMixin {
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 icon: index() == 1
-                    ? const Icon(Icons.event, color: Colors.white)
+                    ? const Icon(Icons.event,
+                        color: Color.fromARGB(255, 85, 16, 79))
                     : const Icon(Icons.event_available_rounded,
-                        color: Color.fromARGB(255, 153, 153, 193)),
+                        color: Color.fromARGB(255, 85, 87, 94)),
                 onPressed: () {
                   changePanel(1);
                 },
@@ -113,9 +113,9 @@ class _HomePage extends ConsumerState<HomePage> with TickerProviderStateMixin {
                 highlightColor: Colors.transparent,
                 icon: index() == 2
                     ? const Icon(Icons.local_activity_sharp,
-                        color: Colors.white)
+                        color: Color.fromARGB(255, 85, 16, 79))
                     : const Icon(Icons.local_activity_rounded,
-                        color: Color.fromARGB(255, 153, 153, 193)),
+                        color: Color.fromARGB(255, 85, 87, 94)),
                 onPressed: () {
                   changePanel(2);
                 },
@@ -125,9 +125,10 @@ class _HomePage extends ConsumerState<HomePage> with TickerProviderStateMixin {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 icon: index() == 3
-                    ? const Icon(Icons.person_2_outlined, color: Colors.white)
+                    ? const Icon(Icons.person_2_outlined,
+                        color: Color.fromARGB(255, 85, 16, 79))
                     : const Icon(Icons.person_2,
-                        color: Color.fromARGB(255, 153, 153, 193)),
+                        color: Color.fromARGB(255, 85, 87, 94)),
                 onPressed: () {
                   changePanel(3);
                 },
@@ -136,9 +137,6 @@ class _HomePage extends ConsumerState<HomePage> with TickerProviderStateMixin {
           ),
         ),
         backgroundColor: Color.fromARGB(255, 99, 87, 87),
-        body: SafeArea(
-            child: ref.watch(homeloadProvider)
-                ? panel[index()]
-                : const Center(child: CircularProgressIndicator())));
+        body: SafeArea(child: panel[index()]));
   }
 }

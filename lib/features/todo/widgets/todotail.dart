@@ -37,7 +37,7 @@ class Todotile extends StatelessWidget {
             padding: EdgeInsets.all(8.h),
             width: AppConsts.kwidth,
             decoration: BoxDecoration(
-              color: AppConsts.kgreylIght,
+              color: Color.fromARGB(255, 233, 248, 248),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -51,66 +51,58 @@ class Todotile extends StatelessWidget {
                       color: AppConsts.kGreen,
                     ),
                   ),
-                  const WidthSpacer(value: 15),
+                  const WidthSpacer(value: 10),
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: SizedBox(
-                      width: AppConsts.kwidth * 0.57,
-                      child: Column(children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Reusables(
-                              text: text ?? "Todo list",
-                              style: appStyle(
-                                  16, AppConsts.klight, FontWeight.bold)),
-                        ),
-                        const Heightspacer(value: 15),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Reusables(
-                              text: text1 ?? "Descriptions on todo",
-                              style: appStyle(
-                                  12, AppConsts.klight, FontWeight.bold)),
-                        ),
-                        const Heightspacer(value: 10),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              children: [
-                                Container(
-                                    width: AppConsts.kwidth * 0.3,
-                                    height: 25.h,
-                                    decoration: BoxDecoration(
-                                        color: AppConsts.kBKDark,
-                                        border: Border.all(
-                                            width: 0.3,
-                                            color: AppConsts.kBKDark),
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10))),
-                                    child: Center(
-                                        child: Reusables(
-                                            text: "$start | $end",
-                                            style: appStyle(
-                                                12,
-                                                AppConsts.klight,
-                                                FontWeight.bold)))),
-                                const WidthSpacer(value: 10),
-                                Row(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Reusables(
+                                  text: text ?? "one time shedule",
+                                  style: appStyle(
+                                      16, AppConsts.kGreyBk, FontWeight.bold)),
+                            ),
+                            const Heightspacer(value: 15),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Reusables(
+                                  text: text1 ?? "Descriptions on todo",
+                                  style: appStyle(
+                                      12, AppConsts.kGreyBk, FontWeight.bold)),
+                            ),
+                            const Heightspacer(value: 10),
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    SizedBox(
-                                      child: editwidget,
-                                    ),
-                                    const WidthSpacer(value: 15),
-                                    GestureDetector(
-                                      onTap: deletef,
-                                      child: const Icon(
-                                          MaterialCommunityIcons.delete),
-                                    )
+                                    Container(
+                                        height: 25.h,
+                                        width: AppConsts.kwidth * 0.55.w,
+                                        decoration: BoxDecoration(
+                                            color: AppConsts.kBKDark,
+                                            border: Border.all(
+                                                width: 0.8,
+                                                color: AppConsts.kBKDark),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(10))),
+                                        child: Center(
+                                            child: Reusables(
+                                                text: "$start | $end",
+                                                style: appStyle(
+                                                    11,
+                                                    AppConsts.klight,
+                                                    FontWeight.bold)))),
+                                    const WidthSpacer(value: 5),
                                   ],
-                                )
-                              ],
-                            ))
-                      ]),
+                                ))
+                          ]),
                     ),
                   ),
                   Container(

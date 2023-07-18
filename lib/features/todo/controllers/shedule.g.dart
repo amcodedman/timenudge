@@ -6,7 +6,7 @@ part of 'shedule.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sheduleHash() => r'8cfdf7b632f0f358949c896bac7eaaf2240732e3';
+String _$sheduleHash() => r'adb5b646711b19dd01c8580cdb81381fd5c30ca2';
 
 /// See also [Shedule].
 @ProviderFor(Shedule)

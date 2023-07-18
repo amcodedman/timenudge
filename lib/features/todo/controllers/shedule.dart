@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -49,6 +51,7 @@ class Shedule extends _$Shedule {
   late List<dynamic> isundayline = [];
   late List<dynamic>? instituteday = [];
   late List<dynamic>? OnetimeShedule = [];
+  late List<dynamic>? onetimepending = [];
   late Map<String, dynamic>? datas = {};
   SharedPreferences? prefs;
   @override
@@ -59,6 +62,64 @@ class Shedule extends _$Shedule {
 
   Future _init() async {
     prefs = await SharedPreferences.getInstance();
+  }
+
+  List<dynamic> getshedulefilter(String word) {
+    List<dynamic> data = [];
+
+    OnetimeShedule!.forEach((element) {
+      String value = element["title"];
+      if (value.contains(word)) {
+        data.add(element);
+      }
+    });
+    return data;
+  }
+
+  List<dynamic> getshedulecompleted() {
+    List<dynamic> onetimepending = [];
+    OnetimeShedule!.forEach((element) {
+      if (element["count"] == 1) {
+        onetimepending.add(element);
+      }
+    });
+    return onetimepending;
+  }
+
+  List<dynamic> getshedulepending() {
+    List<dynamic> onetimepending = [];
+    OnetimeShedule!.forEach((element) {
+      if (element["count"] == 0) {
+        onetimepending.add(element);
+      }
+    });
+    return onetimepending;
+  }
+
+  List<dynamic> getshedulependingtomorrow() {
+    List<dynamic> onetimecomplete = [];
+    DateTime now = DateTime.now();
+
+    DateTime tomorrow = now.add(Duration(days: 1));
+    OnetimeShedule!.forEach((element) {
+      if (element["count"] == 0) {
+        onetimecomplete.add(element);
+
+        // Create the specific date
+        DateTime specificDate = DateTime.parse(element["from"]);
+
+        // Check if the specific date is equal to tomorrow's date
+        bool isTomorrow = specificDate.year == tomorrow.year &&
+            specificDate.month == tomorrow.month &&
+            specificDate.day == tomorrow.day;
+        if (isTomorrow) {
+          onetimecomplete.add(element);
+        }
+      }
+    });
+
+    print(onetimecomplete);
+    return onetimecomplete;
   }
 
   List<dynamic> mondaytask() {
@@ -151,6 +212,82 @@ class Shedule extends _$Shedule {
 
   List<dynamic> sheduleT() {
     return shedule!;
+  }
+
+  List<dynamic> weekdays(String dayn) {
+    List<dynamic> weekday = [];
+
+    if (dayn == "Monday") {
+      mondayline.forEach((days) {
+        weekday.add(days);
+      });
+
+      imondayline.forEach((item) {
+        weekday.add(item);
+      });
+    }
+    if (dayn == "Tuesday") {
+      weekday.clear();
+      tuedayline.forEach((item) {
+        weekday.add(item);
+      });
+
+      ituedayline.forEach((item) {
+        weekday.add(item);
+      });
+    }
+    if (dayn == "Wednesday") {
+      weekday.clear();
+      wednesdayline.forEach((item) {
+        weekday.add(item);
+      });
+
+      iwednesdayline.forEach((item) {
+        weekday.add(item);
+      });
+    }
+    if (dayn == "Thursday") {
+      weekday.clear();
+      thursdayline.forEach((item) {
+        weekday.add(item);
+      });
+
+      ithursdayline.forEach((item) {
+        weekday.add(item);
+      });
+    }
+    if (dayn == "Friday") {
+      weekday.clear();
+      fridayline.forEach((item) {
+        weekday.add(item);
+      });
+
+      ifridayline.forEach((item) {
+        weekday.add(item);
+      });
+    }
+    if (dayn == "Saturday") {
+      weekday.clear();
+      saturdayline.forEach((item) {
+        weekday.add(item);
+      });
+
+      isaturdayline.forEach((item) {
+        weekday.add(item);
+      });
+    }
+    if (dayn == "Sunday") {
+      weekday.clear();
+      sundayline.forEach((item) {
+        weekday.add(item);
+      });
+
+      isundayline.forEach((item) {
+        weekday.add(item);
+      });
+    }
+
+    return weekday;
   }
 
   Map<String, dynamic> toTalToDocompleted() {
@@ -281,7 +418,6 @@ class Shedule extends _$Shedule {
     double rate = 0.01;
 
     if (dayn == "Monday") {
-      print("sssssssssssssssssssssssssssssss");
       mondayline.forEach((days) {
         int number = days["count"];
         count = count + number;
@@ -576,6 +712,8 @@ class Shedule extends _$Shedule {
       mydays = timetable!["days"];
       instituteday = institutetable!["days"];
       OnetimeShedule = myData!["task"];
+      print("task");
+
       prefs!.setDouble("todo_success", toTalToDocompleted()["rate"]!);
       toDocompleted();
       toDocompletedmonth("July");
@@ -789,7 +927,8 @@ class Shedule extends _$Shedule {
   Future<void> CompeleteSchedule(String type, String _ids, int count) async {
     late String? _dayid;
     late int save_count;
-    state = false;
+    state = true;
+
     loading = true;
     String urlbase = "";
     if (type == "Personal table") {
@@ -816,13 +955,10 @@ class Shedule extends _$Shedule {
         state = false;
         result();
         loading = false;
-
-        datas = _result.data;
       }
       if (_result.statusCode == 400) {
         loading = false;
         state = true;
-
         print("error");
       }
     } catch (error) {

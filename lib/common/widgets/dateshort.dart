@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class DateShort {
@@ -6,8 +7,12 @@ class DateShort {
   DateShort({required this.dateString});
 
   String dateSh() {
-    DateTime date = DateTime.parse(dateString);
-    String formattedDate = DateFormat('E MMMM d hh:mm a ').format(date);
-    return formattedDate;
+    String dat = "";
+    if (!dateString.isNull) {
+      DateTime date = DateTime.parse(dateString);
+      dat = DateFormat('E MMMM d hh:mm a ').format(date);
+    }
+
+    return dat;
   }
 }

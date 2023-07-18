@@ -14,6 +14,7 @@ import 'package:timenudge/common/widgets/widthspacer.dart';
 import 'package:timenudge/features/auth/controllers/users.dart';
 
 import '../controllers/shedule.dart';
+import '../pages/homepage.dart';
 
 class AddShedule extends ConsumerStatefulWidget {
   @override
@@ -143,7 +144,10 @@ class _AddShedule extends ConsumerState<AddShedule> {
             backgroundColor: Color.fromARGB(255, 88, 123, 228),
             leading: IconButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (BuildContext _contex) {
+                    return HomePage();
+                  }));
                 },
                 icon: const Icon(
                   FontAwesome.chevron_left,

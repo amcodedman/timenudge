@@ -46,7 +46,7 @@ class BottomNav extends State<StatefulWidget> {
       alignment: Alignment.center,
       margin: const EdgeInsets.only(bottom: 5.0, left: 2, right: 2),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 145, 152, 250),
+        color: Color.fromARGB(255, 1, 4, 37),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -58,9 +58,10 @@ class BottomNav extends State<StatefulWidget> {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               icon: index() == 0
-                  ? const Icon(Icons.home_filled, color: Colors.white)
+                  ? const Icon(Icons.home_filled,
+                      color: Color.fromARGB(255, 12, 31, 94))
                   : const Icon(Icons.home,
-                      color: Color.fromARGB(255, 153, 153, 193)),
+                      color: Color.fromARGB(255, 13, 24, 16)),
               onPressed: () {
                 setState(() {
                   changePanel(0);

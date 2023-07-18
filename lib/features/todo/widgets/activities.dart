@@ -124,9 +124,6 @@ class _Activities extends ConsumerState<Activities>
 
   @override
   void dispose() {
-    _animationController.dispose();
-    _animationControllertodo.dispose();
-    _animationControllerweek.dispose();
     super.dispose();
   }
 
