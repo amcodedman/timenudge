@@ -64,6 +64,80 @@ class Shedule extends _$Shedule {
     prefs = await SharedPreferences.getInstance();
   }
 
+  List<int> dates(String datestring, todate) {
+    DateTime now = DateTime.now();
+    DateTime date = DateTime.parse(datestring);
+    DateTime endDate = DateTime.parse(todate);
+    Duration difference = date.difference(now.add(const Duration(minutes: 5)));
+    Duration differencebtn = endDate.difference(date);
+    int differenceInSeconds = differencebtn.inSeconds;
+    int days = difference.inDays;
+    int hours = difference.inHours.remainder(24);
+    int minutes = difference.inMinutes.remainder(60);
+    int seconds = difference.inSeconds.remainder(60);
+    return [days, hours, minutes, seconds, differenceInSeconds];
+  }
+
+  List<int> datesrepeat(String datestring, String todate, String day) {
+    int daytint = 1;
+    if (day == "Monday") {
+      daytint = 1;
+    }
+    if (day == "Tuesday") {
+      daytint = 2;
+    }
+    if (day == "Wednesday") {
+      daytint = 3;
+    }
+    if (day == "Thursday") {
+      daytint = 4;
+    }
+    if (day == "Friday") {
+      daytint = 5;
+    }
+    if (day == "Saturday") {
+      daytint = 6;
+    }
+    if (day == "Sunday") {
+      daytint = 7;
+    }
+    print(datestring);
+
+    DateTime date = _parseTime(datestring);
+    DateTime endDate = _parseTime(todate);
+
+    Duration differencebtn = endDate.difference(date);
+    int differenceInSeconds = differencebtn.inSeconds;
+
+    int totalHours = date.hour;
+    int remainingMinutes = date.minute;
+    return [totalHours, remainingMinutes, differenceInSeconds, daytint];
+  }
+
+  DateTime _parseTime(String timeStr) {
+    // Extract hour, minute, and am/pm information from the time string
+    List<String> parts = timeStr.split(' ');
+    String timePart = parts[0];
+    String amPmPart = parts[1];
+
+    // Parse hour and minute
+    List<String> timeParts = timePart.split(':');
+    int hour = int.parse(timeParts[0]);
+    int minute = int.parse(timeParts[1]);
+
+    // Adjust the hour for the 12-hour format
+    if (amPmPart == "PM" && hour != 12) {
+      print("pm");
+      hour += 12;
+    } else if (amPmPart == "AM" && hour == 12) {
+      print("am");
+      hour = 0;
+    }
+
+    // Create and return the DateTime object
+    return DateTime(2023, 1, 1, hour, minute);
+  }
+
   List<dynamic> getshedulefilter(String word) {
     List<dynamic> data = [];
 
@@ -714,10 +788,6 @@ class Shedule extends _$Shedule {
       OnetimeShedule = myData!["task"];
       print("task");
 
-      prefs!.setDouble("todo_success", toTalToDocompleted()["rate"]!);
-      toDocompleted();
-      toDocompletedmonth("July");
-      toDocompletedweek("Monday");
       //    print(" timeline ${timetable}");
 
       mydays!.forEach((element) {
@@ -862,6 +932,8 @@ class Shedule extends _$Shedule {
         loading = false;
         state = true;
         datas = _result.data;
+        await result();
+
         addmessage = "Added successfully";
       }
       if (_result.statusCode == 400) {
@@ -879,9 +951,9 @@ class Shedule extends _$Shedule {
   }
 
   Future<void> DeleteSchedule(String type, String ids) async {
-    state = false;
     loading = true;
     String urlbase = type;
+    state = true;
 
     if (type == "Personal table") {
       urlbase = "deleteshedule";
@@ -894,9 +966,6 @@ class Shedule extends _$Shedule {
       urlbase = "deletetask";
     }
 
-    print(urlbase);
-    print(type);
-    print(ids);
     _dio.options.baseUrl = "https://timenudgeservice.onrender.com/";
     prefs = await SharedPreferences.getInstance();
 
@@ -905,22 +974,20 @@ class Shedule extends _$Shedule {
         'data/$urlbase/$ids',
       );
       if (_result.statusCode == 200) {
+        state = false;
         result();
-        loading = false;
-        state = true;
         datas = _result.data;
-        print(datas);
       }
       if (_result.statusCode == 400) {
         loading = false;
-        state = true;
-
+        state = false;
+        result();
         print("error");
       }
     } catch (error) {
       print(error);
       loading = false;
-      state = true;
+      state = false;
     }
   }
 

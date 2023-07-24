@@ -107,6 +107,13 @@ class _Login extends ConsumerState<Login> {
                     color3: AppConsts.klight,
                     text1: "Sign In"),
             const Heightspacer(value: 20),
+            Padding(
+                padding: EdgeInsets.all(5),
+                child: Text(
+                  ref.read(usersProvider.notifier).errormessage,
+                  style: appStyle(13, AppConsts.kred, FontWeight.bold),
+                )),
+            const Heightspacer(value: 20),
             Row(
               children: [
                 Text(

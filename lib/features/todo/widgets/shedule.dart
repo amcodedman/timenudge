@@ -78,14 +78,22 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
   String myinstitutedelete = "Institution";
   String mysheduledelete = "One time schedule";
 
-  bool isTimeWithin12Hours(String duetime) {
-    DateTime dueTime = DateFormat('hh:mm a').parse(duetime);
-    DateTime dueTimePlus12Hours = dueTime.add(const Duration(hours: 12));
+  bool isTimeWithin12Hours(String duetime, String day) {
     DateTime now = DateTime.now();
-    String formattedTime = DateFormat('hh:mm a').format(now);
-    DateTime datenow = DateFormat('hh:mm a').parse(formattedTime);
+    String dayName = DateFormat('EEEE').format(now);
 
-    return datenow.isAfter(dueTime) && datenow.isBefore(dueTimePlus12Hours);
+    bool checker = false;
+    if (dayName == day) {
+      DateTime dueTime = DateFormat('hh:mm a').parse(duetime);
+      DateTime dueTimePlus12Hours = dueTime.add(const Duration(hours: 12));
+
+      String formattedTime = DateFormat('hh:mm a').format(now);
+      DateTime datenow = DateFormat('hh:mm a').parse(formattedTime);
+
+      checker =
+          datenow.isAfter(dueTime) && datenow.isBefore(dueTimePlus12Hours);
+    }
+    return checker;
   }
 
   String timeconvertor(dateString) {
@@ -166,27 +174,24 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          actions: [
-            IconButton(
-              icon: Icon(Icons.add_circle_outline, color: AppConsts.kBKDark),
-              onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) {
-                  return AddShedule();
-                }));
-              },
-            ),
-          ],
-          elevation: 0.0,
-          backgroundColor: Colors.white,
-          leading: Padding(
-            padding: EdgeInsets.all(5),
-            child: Text(
-              'Shedules',
-              style: appStyle(
-                  14, Color.fromARGB(255, 85, 87, 94), FontWeight.bold),
-            ),
-          )),
+        actions: [
+          IconButton(
+              onPressed: () => {ref.read(sheduleProvider.notifier).result()},
+              icon: const Icon(FontAwesome.refresh, color: AppConsts.kBKDark)),
+          IconButton(
+            icon:
+                const Icon(Icons.add_circle_outline, color: AppConsts.kBKDark),
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) {
+                return AddShedule();
+              }));
+            },
+          ),
+        ],
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+      ),
       body: SafeArea(
           child: ref.watch(sheduleProvider)
               ? Padding(
@@ -195,7 +200,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                       child: ListView(children: [
                     Column(children: [
                       Padding(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: SizedBox(
                             height: 40,
                             child: TabBarView(
@@ -207,7 +212,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                           .datafromtimetable("name"))
                                       .toUpperCase(),
                                   style: appStyle(
-                                      20,
+                                      12,
                                       Color.fromARGB(255, 85, 87, 94),
                                       FontWeight.bold),
                                 ),
@@ -221,7 +226,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                               .getdate("company"))
                                           .toUpperCase(),
                                       style: appStyle(
-                                          20,
+                                          12,
                                           Color.fromARGB(255, 85, 87, 94),
                                           FontWeight.bold),
                                     ),
@@ -231,7 +236,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                               .getdate("department"))
                                           .toUpperCase(),
                                       style: appStyle(
-                                          15,
+                                          9,
                                           Color.fromARGB(255, 85, 87, 94),
                                           FontWeight.bold),
                                     ),
@@ -240,14 +245,14 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                 Text(
                                   "My Shedules",
                                   style: appStyle(
-                                      20,
+                                      13,
                                       Color.fromARGB(255, 85, 87, 94),
                                       FontWeight.bold),
                                 )
                               ],
                             )),
                       ),
-                      const Heightspacer(value: 20),
+                      const Heightspacer(value: 30),
                       SizedBox(
                         child: TabBar(
                             indicatorSize: TabBarIndicatorSize.label,
@@ -268,40 +273,34 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                   child: SizedBox(
                                 width: AppConsts.kwidth * 0.5,
                                 child: Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: GestureDetector(
-                                      child: Reusables(
-                                        text: "Everyday Task",
-                                        style: appStyle(13, AppConsts.kBKDark,
-                                            FontWeight.bold),
-                                      ),
-                                      onTap: () {},
-                                    )),
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Reusables(
+                                    text: "Everyday Task",
+                                    style: appStyle(
+                                        12, AppConsts.kBKDark, FontWeight.bold),
+                                  ),
+                                ),
                               )),
                               Tab(
                                   child: Container(
-                                      width: AppConsts.kwidth * 0.5,
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: GestureDetector(
-                                        child: Reusables(
-                                          text: "Institution Timeline",
-                                          style: appStyle(13, AppConsts.kBKDark,
-                                              FontWeight.bold),
-                                        ),
-                                        onTap: () {},
-                                      ))),
+                                width: AppConsts.kwidth * 0.5,
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Reusables(
+                                  text: "Institution Table",
+                                  style: appStyle(
+                                      12, AppConsts.kBKDark, FontWeight.bold),
+                                ),
+                              )),
                               Tab(
                                   child: Container(
-                                      width: AppConsts.kwidth * 0.5,
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: GestureDetector(
-                                        child: Reusables(
-                                          text: "One Time task",
-                                          style: appStyle(13, AppConsts.kBKDark,
-                                              FontWeight.bold),
-                                        ),
-                                        onTap: () {},
-                                      ))),
+                                width: AppConsts.kwidth * 0.5,
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Reusables(
+                                  text: "One Time task",
+                                  style: appStyle(
+                                      12, AppConsts.kBKDark, FontWeight.bold),
+                                ),
+                              )),
                             ]),
                         height: 30,
                         width: AppConsts.kwidth.w,
@@ -332,10 +331,10 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                   Tab(
                                       child: Container(
                                     width: AppConsts.kwidth * 0.5,
-                                    padding: const EdgeInsets.only(left: 20),
+                                    padding: const EdgeInsets.only(left: 5),
                                     child: Reusables(
                                       text: "Monday",
-                                      style: appStyle(13, AppConsts.kBKDark,
+                                      style: appStyle(9, AppConsts.kBKDark,
                                           FontWeight.bold),
                                     ),
                                   )),
@@ -343,11 +342,11 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Tuesday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
@@ -355,11 +354,11 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Wednesday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
@@ -367,11 +366,11 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Thursday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
@@ -379,32 +378,31 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Friday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
                                   Tab(
                                       child: Container(
                                     width: AppConsts.kwidth * 0.5,
-                                    padding: const EdgeInsets.only(left: 20),
+                                    padding: const EdgeInsets.only(left: 5),
                                     child: Reusables(
                                       text: "Saturday",
-                                      style: appStyle(13, AppConsts.kBKDark,
+                                      style: appStyle(9, AppConsts.kBKDark,
                                           FontWeight.bold),
                                     ),
                                   )),
                                   Tab(
                                     child: Container(
                                         width: AppConsts.kwidth * 0.5,
-                                        padding:
-                                            const EdgeInsets.only(left: 20),
+                                        padding: const EdgeInsets.only(left: 5),
                                         child: Reusables(
                                           text: "Sunday",
-                                          style: appStyle(13, AppConsts.kBKDark,
+                                          style: appStyle(9, AppConsts.kBKDark,
                                               FontWeight.bold),
                                         )),
                                   )
@@ -428,11 +426,11 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Monday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
@@ -440,11 +438,11 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Tuesday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
@@ -452,11 +450,11 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Wednesday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
@@ -464,11 +462,11 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Thursday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
@@ -476,11 +474,11 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Friday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
@@ -488,22 +486,21 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       child: Container(
                                           width: AppConsts.kwidth * 0.5,
                                           padding:
-                                              const EdgeInsets.only(left: 20),
+                                              const EdgeInsets.only(left: 5),
                                           child: Reusables(
                                             text: "Saturday",
                                             style: appStyle(
-                                                13,
+                                                9,
                                                 AppConsts.kBKDark,
                                                 FontWeight.bold),
                                           ))),
                                   Tab(
                                     child: Container(
                                         width: AppConsts.kwidth * 0.5,
-                                        padding:
-                                            const EdgeInsets.only(left: 20),
+                                        padding: const EdgeInsets.only(left: 5),
                                         child: Reusables(
                                           text: "Sunday",
-                                          style: appStyle(13, AppConsts.klight,
+                                          style: appStyle(9, AppConsts.kBKDark,
                                               FontWeight.bold),
                                         )),
                                   )
@@ -532,41 +529,47 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                 controller: personalController,
                                 children: [
                                   TaskDisplay(
-                                    ref
-                                        .watch(sheduleProvider.notifier)
-                                        .mondaytask(),
-                                    mydelete,
-                                  ),
+                                      ref
+                                          .watch(sheduleProvider.notifier)
+                                          .mondaytask(),
+                                      mydelete,
+                                      "Monday"),
                                   TaskDisplay(
                                       ref
                                           .watch(sheduleProvider.notifier)
                                           .tuedaytask(),
-                                      mydelete),
+                                      mydelete,
+                                      "Tuesday"),
                                   TaskDisplay(
                                       ref
                                           .watch(sheduleProvider.notifier)
                                           .wednesdaytask(),
-                                      mydelete),
+                                      mydelete,
+                                      "Wednesday"),
                                   TaskDisplay(
                                       ref
                                           .watch(sheduleProvider.notifier)
                                           .thurdaytask(),
-                                      mydelete),
+                                      mydelete,
+                                      "Thursday"),
                                   TaskDisplay(
                                       ref
                                           .watch(sheduleProvider.notifier)
                                           .fridaytask(),
-                                      mydelete),
+                                      mydelete,
+                                      "Friday"),
                                   TaskDisplay(
                                       ref
                                           .watch(sheduleProvider.notifier)
                                           .saturdaytask(),
-                                      mydelete),
+                                      mydelete,
+                                      "Saturday"),
                                   TaskDisplay(
                                       ref
                                           .watch(sheduleProvider.notifier)
                                           .sundaytask(),
-                                      mydelete),
+                                      mydelete,
+                                      "Sunday"),
                                 ]),
                           ),
                           SizedBox(
@@ -577,37 +580,44 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                     ref
                                         .watch(sheduleProvider.notifier)
                                         .imondaytask(),
-                                    myinstitutedelete),
+                                    myinstitutedelete,
+                                    "Monday"),
                                 TaskDisplay(
                                     ref
                                         .watch(sheduleProvider.notifier)
                                         .ituedaytask(),
-                                    myinstitutedelete),
+                                    myinstitutedelete,
+                                    "Tuesday"),
                                 TaskDisplay(
                                     ref
                                         .watch(sheduleProvider.notifier)
                                         .iwednesdaytask(),
-                                    myinstitutedelete),
+                                    myinstitutedelete,
+                                    "Wednesday"),
                                 TaskDisplay(
                                     ref
                                         .watch(sheduleProvider.notifier)
                                         .ithurdaytask(),
-                                    myinstitutedelete),
+                                    myinstitutedelete,
+                                    "Thursday"),
                                 TaskDisplay(
                                     ref
                                         .watch(sheduleProvider.notifier)
                                         .ifridaytask(),
-                                    myinstitutedelete),
+                                    myinstitutedelete,
+                                    "Friday"),
                                 TaskDisplay(
                                     ref
                                         .watch(sheduleProvider.notifier)
                                         .isaturdaytask(),
-                                    myinstitutedelete),
+                                    myinstitutedelete,
+                                    "Saturday"),
                                 TaskDisplay(
                                     ref
                                         .watch(sheduleProvider.notifier)
                                         .isundaytask(),
-                                    myinstitutedelete),
+                                    myinstitutedelete,
+                                    "Sunday"),
                               ])),
                           ListView.builder(
                               scrollDirection: Axis.vertical,
@@ -703,11 +713,9 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                                       mysheduledelete);
                                                 }),
                                             const WidthSpacer(value: 15),
-                                            statusOnetime(ref
-                                                        .watch(sheduleProvider
-                                                            .notifier)
-                                                        .OnetimeShedule![index]
-                                                    ["from"])
+                                            statusOnetime(
+                                                    ref.watch(sheduleProvider.notifier).OnetimeShedule![index]
+                                                        ["from"])
                                                 ? Center(
                                                     child: ref.watch(sheduleProvider.notifier).OnetimeShedule![index]
                                                                 ["count"] ==
@@ -725,8 +733,8 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                                                       "count"]);
                                                             },
                                                             child: const Icon(FontAwesome.thumbs_up,
-                                                                color: AppConsts
-                                                                    .kBKDark,
+                                                                color: Color.fromARGB(
+                                                                    255, 223, 226, 236),
                                                                 size: 15))
                                                         : GestureDetector(
                                                             onTap: () {
@@ -740,7 +748,9 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                                                       [
                                                                       "count"]);
                                                             },
-                                                            child: const Icon(FontAwesome.thumbs_up,
+                                                            child: const Icon(
+                                                                FontAwesome
+                                                                    .thumbs_up,
                                                                 color: Color.fromARGB(
                                                                     255, 227, 245, 70),
                                                                 size: 18)))
@@ -764,7 +774,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
     );
   }
 
-  Widget TaskDisplay(List<dynamic> tasks, String deletetype) {
+  Widget TaskDisplay(List<dynamic> tasks, String deletetype, String day) {
     return Container(
         height: AppConsts.kheight * 0.7,
         child: ListView.builder(
@@ -816,7 +826,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                           const WidthSpacer(value: 30),
                           GestureDetector(
                               child: const Icon(Icons.delete,
-                                  color: AppConsts.klight, size: 15),
+                                  color: AppConsts.klight, size: 20),
                               onTap: () {
                                 showOutputDialog(
                                     context,
@@ -825,7 +835,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                     deletetype);
                               }),
                           const WidthSpacer(value: 15),
-                          isTimeWithin12Hours(tasks[index]["from"])
+                          isTimeWithin12Hours(tasks[index]["from"], day)
                               ? Center(
                                   child: tasks[index]["complete"] == 0
                                       ? GestureDetector(
@@ -836,10 +846,15 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                                     deletetype,
                                                     tasks[index]["_id"],
                                                     tasks[index]["count"]);
+
+                                            ref
+                                                .read(sheduleProvider.notifier)
+                                                .result();
                                           },
                                           child: const Icon(
                                               FontAwesome.thumbs_up,
-                                              color: AppConsts.kBKDark,
+                                              color: Color.fromARGB(
+                                                  255, 194, 196, 199),
                                               size: 15))
                                       : GestureDetector(
                                           onTap: () {
@@ -849,6 +864,9 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                                     deletetype,
                                                     tasks[index]["_id"],
                                                     tasks[index]["count"]);
+                                            ref
+                                                .read(sheduleProvider.notifier)
+                                                .result();
                                           },
                                           child: const Icon(
                                               FontAwesome.thumbs_up,

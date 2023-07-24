@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +14,7 @@ import 'package:timenudge/common/widgets/dateshort.dart';
 import 'package:timenudge/common/widgets/heightspacer.dart';
 import 'package:timenudge/common/widgets/widthspacer.dart';
 import 'package:timenudge/features/auth/controllers/users.dart';
+import 'package:timenudge/pages/notificateHelper.dart';
 
 import '../controllers/shedule.dart';
 import '../pages/homepage.dart';
@@ -44,6 +47,12 @@ class _AddShedule extends ConsumerState<AddShedule> {
 
   String getboxtext() {
     return boxtext;
+  }
+
+  int randonid() {
+    var rnd = new Random();
+    var next = rnd.nextDouble() * 1000000;
+    return next.toInt();
   }
 
   DateTime? selectedDateTime;
@@ -103,6 +112,19 @@ class _AddShedule extends ConsumerState<AddShedule> {
         });
       }
     }
+  }
+
+  late NotificationHelper notifyhelper;
+  late NotificationHelper notifycontroller;
+
+  @override
+  void initState() {
+    notifyhelper = NotificationHelper(ref: ref);
+    Future.delayed(const Duration(seconds: 2), () {
+      notifycontroller = NotificationHelper(ref: ref);
+    });
+    notifyhelper.initializeNotification();
+    super.initState();
   }
 
   @override
@@ -475,12 +497,11 @@ class _AddShedule extends ConsumerState<AddShedule> {
               const Heightspacer(value: 90),
               Center(
                   child: !ref.watch(sheduleProvider)
-                      ? CircularProgressIndicator()
+                      ? const CircularProgressIndicator()
                       : Container(
                           child: boxtext == "One time schedule"
                               ? MaterialButton(
                                   onPressed: () {
-                                    print("Press");
                                     setState(() {
                                       ref
                                           .read(sheduleProvider.notifier)
@@ -495,6 +516,39 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                             boxtextD,
                                             selectedDateTime!.toString(),
                                             selectedDateTimeTo.toString());
+
+                                    notifyhelper.scheduledNotification(
+                                        ref.read(sheduleProvider.notifier).dates(
+                                            selectedDateTime!.toString(),
+                                            selectedDateTimeTo.toString())[0],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .dates(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo
+                                                    .toString())[1],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .dates(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo
+                                                    .toString())[2],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .dates(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo
+                                                    .toString())[3],
+                                        randonid(),
+                                        sheduletitle,
+                                        selectedDateTime!.toString(),
+                                        selectedDateTimeTo.toString(),
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .dates(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo
+                                                    .toString())[4]);
                                   },
                                   child: Container(
                                       height: 40,
@@ -547,6 +601,43 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                             boxtextD,
                                             timeOfshedule.format(context),
                                             endshedule.format(context));
+
+                                    notifyhelper.scheduledNotificationRepeat(
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesrepeat(
+                                                timeOfshedule.format(context),
+                                                endshedule.format(context),
+                                                boxtextD)[0],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesrepeat(
+                                                timeOfshedule.format(context),
+                                                endshedule.format(context),
+                                                boxtextD)[1],
+                                        randonid(),
+                                        sheduletitle,
+                                        timeOfshedule.format(context),
+                                        endshedule.format(context),
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesrepeat(
+                                                timeOfshedule.format(context),
+                                                endshedule.format(context),
+                                                boxtextD)[2],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesrepeat(
+                                                timeOfshedule.format(context),
+                                                endshedule.format(context),
+                                                boxtextD)[3]);
+
+                                    print(ref
+                                        .read(sheduleProvider.notifier)
+                                        .datesrepeat(
+                                            timeOfshedule.format(context),
+                                            endshedule.format(context),
+                                            boxtextD));
                                   },
                                   child: Container(
                                       height: 40,

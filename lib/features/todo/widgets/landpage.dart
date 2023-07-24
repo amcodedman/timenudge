@@ -21,6 +21,7 @@ import 'package:timenudge/features/todo/widgets/homep.dart';
 
 import 'package:timenudge/features/todo/widgets/Account.dart';
 
+import '../../../pages/notificateHelper.dart';
 import '../controllers/expensions.dart';
 
 class LandPage extends ConsumerStatefulWidget {
@@ -90,9 +91,17 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
     return statuss;
   }
 
+  late NotificationHelper notifyhelper;
+  late NotificationHelper notifycontroller;
   @override
   void initState() {
     // TODO: implement initState
+    notifyhelper = NotificationHelper(ref: ref);
+    Future.delayed(const Duration(seconds: 2), () {
+      notifycontroller = NotificationHelper(ref: ref);
+    });
+    notifyhelper.initializeNotification();
+    super.initState();
   }
 
   @override
@@ -171,7 +180,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                                   child: SizedBox(
                                 width: AppConsts.kwidth * 0.7,
                                 child: Padding(
-                                    padding: const EdgeInsets.only(left: 10),
+                                    padding: const EdgeInsets.only(left: 5),
                                     child: Reusables(
                                       text: "Pending",
                                       style: appStyle(16, AppConsts.kBKDark,

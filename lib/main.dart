@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:timenudge/features/todo/pages/homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timenudge/pages/view_notification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +56,7 @@ class _Launch extends State<Launch> {
         designSize: const Size(375, 825),
         minTextAdapt: true,
         builder: (context, child) {
-          return MaterialApp(
+          return GetMaterialApp(
             title: "Timenudge",
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
