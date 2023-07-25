@@ -26,7 +26,7 @@ class CustomTextField extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       width: AppConsts.kwidth * 0.8,
-      height: 40,
+      height: 50,
       decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -47,7 +47,7 @@ class CustomTextField extends StatelessWidget {
               suffixIcon:
                   suffix == null ? null : GestureDetector(child: suffix),
               hintText: hint,
-              hintStyle: appStyle(15, AppConsts.kBKDark, FontWeight.normal),
+              hintStyle: appStyle(12, AppConsts.kBKDark, FontWeight.normal),
               hoverColor: AppConsts.kBKDark,
               enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(

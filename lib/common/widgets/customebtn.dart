@@ -33,7 +33,7 @@ class CustomBtn extends StatelessWidget {
             border: Border.all(width: 1, color: color3)),
         child: Reusables(
           text: text1,
-          style: appStyle(18, color3, FontWeight.bold),
+          style: appStyle(11, color3, FontWeight.bold),
         ),
       ),
     );
