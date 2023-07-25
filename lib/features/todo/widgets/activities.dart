@@ -5,16 +5,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timenudge/common/ultils/appstyle.dart';
 import 'package:timenudge/common/ultils/constants.dart';
 import 'package:timenudge/common/ultils/resuables.dart';
+import 'package:timenudge/common/widgets/Expansiontile.dart';
 import 'package:timenudge/common/widgets/heightspacer.dart';
+import 'package:timenudge/common/widgets/progresstile.dart';
 import 'package:timenudge/common/widgets/widthspacer.dart';
 import 'package:timenudge/features/auth/controllers/users.dart';
 import 'package:timenudge/features/onboarding/pages/onboarding.dart';
 import 'package:timenudge/features/todo/controllers/shedule.dart';
 import 'package:timenudge/main.dart';
+
+import '../controllers/expensions.dart';
 
 class Activities extends ConsumerStatefulWidget {
   @override
@@ -41,12 +46,16 @@ class _Activities extends ConsumerState<Activities>
     int numerator = numerat;
     int denominator = denominat;
     double percentage = (numerator / denominator) * 100;
-
-    String formattedPercentage = '${percentage.toStringAsFixed(2)}%';
+    String formattedPercentage = "";
+    if (numerat == 0) {
+      formattedPercentage = '0%';
+    } else {
+      formattedPercentage = '${percentage.toStringAsFixed(2)}%';
+    }
     return formattedPercentage;
   }
 
-  var boxtextD = "January";
+  var boxtextD = "All Tasks";
   var textD = "Monday";
   var displayevent = "";
   void onChangeD(String selectedValue) {
@@ -84,6 +93,15 @@ class _Activities extends ConsumerState<Activities>
     prefs = await SharedPreferences.getInstance();
 
     prefs.setString("email", "");
+  }
+
+  int daycount(String dates) {
+    DateTime dateTime = DateTime.parse(dates);
+    DateTime now = DateTime.now();
+    DateTime tomorrow = now.add(Duration(days: 1));
+    Duration difference = tomorrow.difference(dateTime);
+    int differenceInDays = difference.inDays;
+    return differenceInDays;
   }
 
   @override
@@ -127,6 +145,15 @@ class _Activities extends ConsumerState<Activities>
     super.dispose();
   }
 
+  String dateconvertor(dateString) {
+    String formattedDate = "";
+
+    DateTime date = DateTime.parse(dateString);
+    formattedDate = DateFormat('E MMMM d h:mm a').format(date);
+
+    return formattedDate;
+  }
+
   late String? myname = "";
   late String? user_name = "";
   late String? user_email = "";
@@ -134,6 +161,8 @@ class _Activities extends ConsumerState<Activities>
   late String? department = "";
   late final TabController tabController =
       TabController(length: 3, vsync: this);
+  late final TabController tabControllertodo =
+      TabController(length: 2, vsync: this);
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +197,7 @@ class _Activities extends ConsumerState<Activities>
     ref.read(sheduleProvider.notifier).dayfromtimetable();
 
     List<String> listsD = const [
+      "All Tasks",
       "January",
       "February",
       "March",
@@ -225,7 +255,7 @@ class _Activities extends ConsumerState<Activities>
           isScrollable: false,
           tabs: [
             Tab(
-              height: 100,
+              height: 80,
               child: Padding(
                 padding: const EdgeInsets.only(left: 1),
                 child: Container(
@@ -234,7 +264,7 @@ class _Activities extends ConsumerState<Activities>
                   height: 100,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Color.fromRGBO(77, 147, 240, 1),
+                      color: Color.fromRGBO(26, 42, 63, 1),
                       boxShadow: [
                         BoxShadow(
                           color: const Color.fromARGB(255, 231, 230, 230)
@@ -250,7 +280,7 @@ class _Activities extends ConsumerState<Activities>
                         const Icon(
                           FontAwesome.list,
                           color: Colors.white,
-                          size: 40,
+                          size: 30,
                         ),
                         Reusables(
                             text: " Tasks Summary",
@@ -263,7 +293,7 @@ class _Activities extends ConsumerState<Activities>
               ),
             ),
             Tab(
-              height: 100,
+              height: 80,
               child: Padding(
                 padding: const EdgeInsets.only(left: 1),
                 child: Container(
@@ -271,7 +301,7 @@ class _Activities extends ConsumerState<Activities>
                   width: AppConsts.kwidth * 0.3.w,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Color.fromRGBO(242, 125, 116, 1),
+                      color: Color.fromRGBO(186, 174, 66, 1),
                       boxShadow: [
                         BoxShadow(
                           color: const Color.fromARGB(255, 231, 230, 230)
@@ -287,7 +317,7 @@ class _Activities extends ConsumerState<Activities>
                         const Icon(
                           FontAwesome.check_square,
                           color: Colors.white,
-                          size: 40,
+                          size: 30,
                         ),
                         Reusables(
                             text: "Todo Task",
@@ -300,16 +330,16 @@ class _Activities extends ConsumerState<Activities>
               ),
             ),
             Tab(
-              height: 100,
+              height: 80,
               child: Padding(
                 padding: const EdgeInsets.only(left: 1),
                 child: Container(
                   alignment: Alignment.center,
                   width: AppConsts.kwidth * 0.3.w,
-                  height: 100,
+                  height: 80,
                   decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      color: const Color.fromRGBO(240, 105, 237, 1),
+                      color: Color.fromARGB(255, 148, 63, 146),
                       boxShadow: [
                         BoxShadow(
                           color: const Color.fromARGB(255, 231, 230, 230)
@@ -325,7 +355,7 @@ class _Activities extends ConsumerState<Activities>
                         const Icon(
                           FontAwesome.calendar,
                           color: Colors.white,
-                          size: 40,
+                          size: 30,
                         ),
                         Reusables(
                             text: "Weekly Task",
@@ -342,14 +372,14 @@ class _Activities extends ConsumerState<Activities>
       ),
       body: SafeArea(
           child: ref.watch(sheduleProvider)
-              ? ListView(children: <Widget>[
+              ? ListView(children: [
                   SizedBox(
-                    height: AppConsts.kheight * 0.7,
+                    height: AppConsts.kheight * 0.9,
                     width: AppConsts.kwidth.w,
                     child: TabBarView(controller: tabController, children: [
                       Builder(builder: (BuildContext context) {
                         return ListView(
-                          children: <Widget>[
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(10),
                               child: Text(
@@ -848,14 +878,23 @@ class _Activities extends ConsumerState<Activities>
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(10))),
                                     ),
-                                    showProgressIndicator(
-                                        ref
-                                            .watch(sheduleProvider.notifier)
-                                            .toDocompletedmonth(boxtextD),
-                                        boxtextD,
-                                        boxtextD)
                                   ]),
-                            )
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: showProgressIndicat(
+                                    ref
+                                        .watch(sheduleProvider.notifier)
+                                        .toDocompletedmonth(boxtextD)["failed"],
+                                    ref
+                                        .watch(sheduleProvider.notifier)
+                                        .toDocompletedmonth(
+                                            boxtextD)["completed"],
+                                    ref
+                                        .watch(sheduleProvider.notifier)
+                                        .toDocompletedmonth(boxtextD),
+                                    boxtextD,
+                                    boxtextD))
                           ]),
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1058,14 +1097,19 @@ class _Activities extends ConsumerState<Activities>
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(10))),
                                     ),
-                                    showProgressIndicator(
-                                        ref
-                                            .watch(sheduleProvider.notifier)
-                                            .toDocompletedweek(textD),
-                                        textD,
-                                        boxtextD)
                                   ]),
-                            )
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: showProgressIndicatdays(
+                                    ref
+                                        .watch(sheduleProvider.notifier)
+                                        .toDocompletedweek(textD)["daylist"],
+                                    ref
+                                        .watch(sheduleProvider.notifier)
+                                        .toDocompletedweek(textD),
+                                    textD,
+                                    boxtextD))
                           ]),
                     ]),
                   ),
@@ -1128,6 +1172,309 @@ class _Activities extends ConsumerState<Activities>
             ],
           ),
         )
+      ],
+    );
+  }
+
+  Widget showProgressIndicat(
+      List<dynamic> failedtodo,
+      List<dynamic> completetodo,
+      Map<String, dynamic> task,
+      String header,
+      String month) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ProgressTile(
+          progressb: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                    width: AppConsts.kwidth * 0.6.w,
+                    height: 5,
+                    child: LinearProgressIndicator(
+                      value: task[
+                          "rate"], // Explicitly cast the animation value to double
+                      backgroundColor: Color.fromARGB(255, 149, 148, 167),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          Color.fromARGB(255, 211, 12, 211)),
+                    )),
+                Container(
+                    child:
+                        Text(mypercentage(task["success"]!, task["total"]!))),
+              ]),
+          text2: header +
+              " Progress Total ${task["total"]!}    Completed  ${task["success"]!}",
+          onExpensionchange: (bool epend) {
+            ref.read(pageExpensionProvider.notifier).setStart(!epend);
+          },
+          trailing: ref.watch(pageExpensionProvider)
+              ? const Padding(
+                  padding: EdgeInsets.only(right: 12),
+                  child: Icon(AntDesign.circledown,
+                      size: 14, color: Color.fromARGB(255, 191, 201, 6)),
+                )
+              : const Padding(
+                  padding: EdgeInsets.only(right: 12),
+                  child: Icon(
+                    AntDesign.closecircleo,
+                    size: 14,
+                    color: AppConsts.klight,
+                  ),
+                ),
+          children: [
+            Container(
+              height: 25,
+              width: AppConsts.kwidth * 0.9.w,
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 85, 87, 94),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: TabBar(
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicator: const BoxDecoration(
+                    color: Color.fromARGB(255, 139, 144, 148),
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                  ),
+                  controller: tabControllertodo,
+                  labelPadding: EdgeInsets.zero,
+                  labelColor: AppConsts.kBluelight,
+                  isScrollable: false,
+                  unselectedLabelColor: Color.fromARGB(255, 115, 156, 211),
+                  labelStyle:
+                      appStyle(24, AppConsts.kBluelight, FontWeight.w700),
+                  tabs: [
+                    Tab(
+                        child: SizedBox(
+                      width: AppConsts.kwidth * 0.6,
+                      child: Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Reusables(
+                            text: "failed to complete",
+                            style: appStyle(
+                                13, AppConsts.kBKDark, FontWeight.bold),
+                          )),
+                    )),
+                    Tab(
+                        child: Container(
+                      width: AppConsts.kwidth * 0.7,
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Reusables(
+                        text: "Completed",
+                        style: appStyle(13, AppConsts.kBKDark, FontWeight.bold),
+                      ),
+                    ))
+                  ]),
+            ),
+            const Heightspacer(value: 20),
+            SizedBox(
+              width: AppConsts.kwidth,
+              height: AppConsts.kheight * 0.2,
+              child: TabBarView(controller: tabControllertodo, children: [
+                Container(
+                    color: Color.fromARGB(255, 85, 87, 94),
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: failedtodo.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 5),
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color:
+                                          Color.fromARGB(255, 215, 237, 229)),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Title  : " +
+                                            failedtodo[index]["title"],
+                                        style: appStyle(
+                                            13,
+                                            Color.fromARGB(255, 26, 3, 3),
+                                            FontWeight.bold),
+                                      ), // Title text
+                                      Text(
+                                        dateconvertor(
+                                                failedtodo[index]["from"]) +
+                                            " | " +
+                                            dateconvertor(
+                                                failedtodo[index]["to"]),
+                                        style: appStyle(
+                                            12,
+                                            Color.fromRGBO(143, 3, 38, 1),
+                                            FontWeight.bold),
+                                      )
+                                    ],
+                                  )
+
+                                  // Subtitle text
+
+                                  ));
+                        })),
+                Container(
+                    color: Color.fromARGB(255, 40, 40, 42),
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: completetodo.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Color.fromARGB(255, 215, 237, 229),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Title  : " +
+                                            completetodo[index]["title"],
+                                        style: appStyle(
+                                            13,
+                                            Color.fromARGB(255, 9, 10, 35),
+                                            FontWeight.bold),
+                                      ), // Title text
+                                      Text(
+                                        dateconvertor(
+                                                completetodo[index]["from"]) +
+                                            " | " +
+                                            dateconvertor(
+                                                completetodo[index]["to"]),
+                                        style: appStyle(
+                                            12,
+                                            Color.fromRGBO(16, 6, 52, 1),
+                                            FontWeight.bold),
+                                      )
+                                    ],
+                                  )
+
+                                  // Subtitle text
+
+                                  ));
+                        })),
+              ]),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget showProgressIndicatdays(List<dynamic> todo, Map<String, dynamic> task,
+      String header, String month) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ProgressTile(
+          progressb: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                    width: AppConsts.kwidth * 0.6.w,
+                    height: 5,
+                    child: LinearProgressIndicator(
+                      value: task[
+                          "rate"], // Explicitly cast the animation value to double
+                      backgroundColor: const Color.fromARGB(255, 149, 148, 167),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          Color.fromARGB(255, 211, 12, 211)),
+                    )),
+                Container(
+                    child:
+                        Text(mypercentage(task["success"]!, task["total"]!))),
+              ]),
+          text2: header +
+              " Progress Total ${task["total"]!}    Completed  ${task["success"]!}",
+          onExpensionchange: (bool epend) {
+            ref.read(pageExpensionProvider.notifier).setStart(!epend);
+          },
+          trailing: ref.watch(pageExpensionProvider)
+              ? const Padding(
+                  padding: EdgeInsets.only(right: 12),
+                  child: Icon(AntDesign.circledown,
+                      size: 14, color: Color.fromARGB(255, 191, 201, 6)),
+                )
+              : const Padding(
+                  padding: EdgeInsets.only(right: 12),
+                  child: Icon(
+                    AntDesign.closecircleo,
+                    size: 14,
+                    color: AppConsts.klight,
+                  ),
+                ),
+          children: [
+            SizedBox(
+              width: AppConsts.kwidth,
+              height: AppConsts.kheight * 0.3,
+              child: Container(
+                  color: Color.fromARGB(255, 85, 87, 94),
+                  child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: todo.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Color.fromARGB(255, 215, 237, 229)),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Title  : " + todo[index]["title"],
+                                      style: appStyle(
+                                          13,
+                                          Color.fromARGB(255, 21, 19, 42),
+                                          FontWeight.bold),
+                                    ), // Title text
+                                    Text(
+                                      todo[index]["from"] +
+                                          " | " +
+                                          todo[index]["to"],
+                                      style: appStyle(
+                                          12,
+                                          Color.fromARGB(255, 18, 17, 28),
+                                          FontWeight.normal),
+                                    ),
+
+                                    Text(
+                                      "Total   " +
+                                          daycount(todo[index]["createdAt"])
+                                              .toString() +
+                                          "  " +
+                                          "Completed   " +
+                                          todo[index]["count"].toString(),
+                                      style: appStyle(
+                                          12,
+                                          Color.fromARGB(255, 27, 24, 70),
+                                          FontWeight.bold),
+                                    )
+                                  ],
+                                )
+
+                                // Subtitle text
+
+                                ));
+                      })),
+            )
+          ],
+        ),
       ],
     );
   }

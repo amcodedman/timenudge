@@ -19,7 +19,7 @@ class HTTPservic {
 
       return _response;
     } catch (e) {
-      print(e);
+   
     }
   }
 }

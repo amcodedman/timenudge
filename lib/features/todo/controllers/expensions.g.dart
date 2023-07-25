@@ -6,7 +6,7 @@ part of 'expensions.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$pageExpensionHash() => r'54aa75e830cea5d0972ee3bcf37a40a2e45be312';
+String _$pageExpensionHash() => r'f72206bfa5129e0664de54f0a3b6d6ef0889edce';
 
 /// See also [PageExpension].
 @ProviderFor(PageExpension)
@@ -23,7 +23,7 @@ final pageExpensionProvider =
 
 typedef _$PageExpension = AutoDisposeNotifier<bool>;
 String _$pageExpensionSzeroHash() =>
-    r'ad62182b5b082456f02d2fb00051586292fb01b5';
+    r'97a866a328781102d5791983d0f805d35ec75430';
 
 /// See also [PageExpensionSzero].
 @ProviderFor(PageExpensionSzero)

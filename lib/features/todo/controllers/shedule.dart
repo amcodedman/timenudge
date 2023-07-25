@@ -64,11 +64,12 @@ class Shedule extends _$Shedule {
     prefs = await SharedPreferences.getInstance();
   }
 
-  List<int> dates(String datestring, todate) {
+  List<int> dates(int notice, String datestring, todate) {
     DateTime now = DateTime.now();
+
     DateTime date = DateTime.parse(datestring);
     DateTime endDate = DateTime.parse(todate);
-    Duration difference = date.difference(now.add(const Duration(minutes: 5)));
+    Duration difference = date.difference(now.add(Duration(minutes: notice)));
     Duration differencebtn = endDate.difference(date);
     int differenceInSeconds = differencebtn.inSeconds;
     int days = difference.inDays;
@@ -78,7 +79,92 @@ class Shedule extends _$Shedule {
     return [days, hours, minutes, seconds, differenceInSeconds];
   }
 
-  List<int> datesrepeat(String datestring, String todate, String day) {
+  int durationTime(String datestring, int type) {
+    DateTime now = DateTime.now();
+    DateTime? date;
+    DateTime? nowdate;
+    int differenceInSeconds = 0;
+    String dateformat = DateFormat('h:mm a').format(now);
+
+    if (type == 0) {
+      date = DateTime.parse(datestring);
+
+      Duration duration = date.difference(now);
+      differenceInSeconds = duration.inSeconds;
+    }
+    if (type == 1) {
+      date = _parseTime(datestring);
+      nowdate = _parseTime(dateformat);
+      Duration duration1 = date.difference(nowdate);
+      differenceInSeconds = duration1.inSeconds;
+    }
+
+    return differenceInSeconds;
+  }
+
+  List<int> datesend(
+    String datestring,
+    todate,
+  ) {
+    DateTime now = DateTime.now();
+    DateTime date = DateTime.parse(datestring);
+    DateTime endDate = DateTime.parse(todate);
+    Duration difference = endDate.difference(now);
+    Duration differencebtn = endDate.difference(date);
+    int differenceInSeconds = differencebtn.inSeconds;
+    int days = difference.inDays;
+    int hours = difference.inHours.remainder(24);
+    int minutes = difference.inMinutes.remainder(60);
+    int seconds = difference.inSeconds.remainder(60);
+    return [days, hours, minutes, seconds, differenceInSeconds];
+  }
+
+  List<int> datesrepeatend(
+    String datestring,
+    String todate,
+    String day,
+  ) {
+    int daytint = 1;
+    if (day == "Monday") {
+      daytint = 1;
+    }
+
+    if (day == "Tuesday") {
+      daytint = 2;
+    }
+    if (day == "Wednesday") {
+      daytint = 3;
+    }
+    if (day == "Thursday") {
+      daytint = 4;
+    }
+    if (day == "Friday") {
+      daytint = 5;
+    }
+    if (day == "Saturday") {
+      daytint = 6;
+    }
+    if (day == "Sunday") {
+      daytint = 7;
+    }
+
+    DateTime date = _parseTime(datestring);
+    DateTime endDate = _parseTime(todate);
+
+    Duration differencebtn = endDate.difference(date);
+    int differenceInSeconds = differencebtn.inSeconds;
+
+    int totalHours = endDate.hour;
+    int remainingMinutes = endDate.minute;
+    return [totalHours, remainingMinutes, differenceInSeconds, daytint];
+  }
+
+  List<int> datesrepeat(
+    int notice,
+    String datestring,
+    String todate,
+    String day,
+  ) {
     int daytint = 1;
     if (day == "Monday") {
       daytint = 1;
@@ -101,16 +187,15 @@ class Shedule extends _$Shedule {
     if (day == "Sunday") {
       daytint = 7;
     }
-    print(datestring);
 
     DateTime date = _parseTime(datestring);
+    DateTime alertdate = date.subtract(Duration(minutes: notice));
     DateTime endDate = _parseTime(todate);
 
     Duration differencebtn = endDate.difference(date);
     int differenceInSeconds = differencebtn.inSeconds;
-
-    int totalHours = date.hour;
-    int remainingMinutes = date.minute;
+    int totalHours = alertdate.hour;
+    int remainingMinutes = alertdate.minute;
     return [totalHours, remainingMinutes, differenceInSeconds, daytint];
   }
 
@@ -127,10 +212,8 @@ class Shedule extends _$Shedule {
 
     // Adjust the hour for the 12-hour format
     if (amPmPart == "PM" && hour != 12) {
-      print("pm");
       hour += 12;
     } else if (amPmPart == "AM" && hour == 12) {
-      print("am");
       hour = 0;
     }
 
@@ -192,7 +275,6 @@ class Shedule extends _$Shedule {
       }
     });
 
-    print(onetimecomplete);
     return onetimecomplete;
   }
 
@@ -288,6 +370,153 @@ class Shedule extends _$Shedule {
     return shedule!;
   }
 
+  Map<String, dynamic> weekdayschecker(String time, String dayn) {
+    bool check = false;
+    String task = "";
+
+    DateTime now = DateTime.now();
+    DateTime? date;
+    DateTime nowdate = _parseTime(time);
+    int differenceInSeconds = 0;
+    String dateformat = DateFormat('h:mm a').format(now);
+
+    if (dayn == "Monday") {
+      mondayline.forEach((days) {
+        DateTime from = _parseTime(days["from"]);
+        DateTime to = _parseTime(days["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = days["title"];
+        }
+      });
+
+      imondayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+    }
+    if (dayn == "Tuesday") {
+      tuedayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+
+      ituedayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+    }
+    if (dayn == "Wednesday") {
+      wednesdayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+
+      iwednesdayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+    }
+    if (dayn == "Thursday") {
+      thursdayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+
+      ithursdayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+    }
+    if (dayn == "Friday") {
+      fridayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+
+      ifridayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+    }
+    if (dayn == "Saturday") {
+      saturdayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+
+      isaturdayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+    }
+    if (dayn == "Sunday") {
+      sundayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+
+      isundayline.forEach((item) {
+        DateTime from = _parseTime(item["from"]);
+        DateTime to = _parseTime(item["to"]);
+        if (nowdate.isAfter(from) && nowdate.isBefore(to)) {
+          check = true;
+          task = item["title"];
+        }
+      });
+    }
+
+    return {"check": check, "task": task};
+  }
+
   List<dynamic> weekdays(String dayn) {
     List<dynamic> weekday = [];
 
@@ -370,10 +599,14 @@ class Shedule extends _$Shedule {
     double rate = 0.01;
     AllTasks.clear();
     OnetimeShedule!.forEach((element) {
-      AllTasks.add(element);
-      total = total + 1;
-      if (element["count"] == 1) {
-        count = count + 1;
+      DateTime now = DateTime.now();
+      DateTime dateTime = DateTime.parse(element["from"]);
+      if (dateTime.isBefore(now)) {
+        AllTasks.add(element);
+        total = total + 1;
+        if (element["count"] == 1) {
+          count = count + 1;
+        }
       }
     });
 
@@ -416,7 +649,6 @@ class Shedule extends _$Shedule {
     double percentage = (count / total) * 100;
     double number = double.parse(percentage.toStringAsFixed(2));
     if (number.isNaN) {
-      print("Invalid");
     } else {
       rate = number / 100;
     }
@@ -427,6 +659,8 @@ class Shedule extends _$Shedule {
     int count = 0;
     int total = 0;
     double rate = 0.01;
+    List<dynamic> completedtodos = [];
+    List<dynamic> failedtodos = [];
     int monthnumber = 1;
     if (month == "January") {
       monthnumber = 1;
@@ -464,13 +698,34 @@ class Shedule extends _$Shedule {
     if (month == "December") {
       monthnumber = 12;
     }
+    if (month == "All Tasks") {
+      OnetimeShedule!.forEach((element) {
+        DateTime dateTime = DateTime.parse(element["from"]);
+        DateTime now = DateTime.now();
+        if (dateTime.isBefore(now)) {
+          total = total + 1;
+          if (element["count"] == 1) {
+            count = count + 1;
+            completedtodos.add(element);
+          } else {
+            failedtodos.add(element);
+          }
+        }
+      });
+    }
 
     OnetimeShedule!.forEach((element) {
       DateTime dateTime = DateTime.parse(element["from"]);
-      if (dateTime.month == monthnumber) {
-        total = total + 1;
-        if (element["count"] == 1) {
-          count = count + 1;
+      DateTime now = DateTime.now();
+      if (dateTime.isBefore(now)) {
+        if (dateTime.month == monthnumber) {
+          total = total + 1;
+          if (element["count"] == 1) {
+            count = count + 1;
+            completedtodos.add(element);
+          } else {
+            failedtodos.add(element);
+          }
         }
       }
     });
@@ -478,31 +733,36 @@ class Shedule extends _$Shedule {
     double percentage = (count / total) * 100;
     double number = double.parse(percentage.toStringAsFixed(2));
     if (number.isNaN) {
-      print("Invalid");
     } else {
       rate = number / 100;
-      print("Percent $rate");
     }
-    return {"success": count, "total": total, "rate": rate};
+    return {
+      "failed": failedtodos,
+      "completed": completedtodos,
+      "success": count,
+      "total": total,
+      "rate": rate
+    };
   }
 
   Map<String, dynamic> toDocompletedweek(String dayn) {
     int count = 0;
     int total = 0;
     double rate = 0.01;
+    List<dynamic> daylist = [];
 
     if (dayn == "Monday") {
       mondayline.forEach((days) {
         int number = days["count"];
         count = count + number;
         String dates = days["createdAt"];
-
         DateTime dateTime = DateTime.parse(dates);
         DateTime now = DateTime.now();
         DateTime tomorrow = now.add(Duration(days: 1));
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(days);
       });
 
       imondayline.forEach((item) {
@@ -516,6 +776,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
     }
     if (dayn == "Tuesday") {
@@ -530,6 +791,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
 
       ituedayline.forEach((item) {
@@ -543,6 +805,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
     }
     if (dayn == "Wednesday") {
@@ -557,6 +820,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
 
       iwednesdayline.forEach((item) {
@@ -570,6 +834,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
     }
     if (dayn == "Thursday") {
@@ -584,6 +849,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
 
       ithursdayline.forEach((item) {
@@ -597,6 +863,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
     }
     if (dayn == "Friday") {
@@ -611,6 +878,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
 
       ifridayline.forEach((item) {
@@ -624,6 +892,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
     }
     if (dayn == "Saturday") {
@@ -638,6 +907,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
 
       isaturdayline.forEach((item) {
@@ -651,6 +921,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
     }
     if (dayn == "Sunday") {
@@ -665,6 +936,7 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
 
       isundayline.forEach((item) {
@@ -678,18 +950,17 @@ class Shedule extends _$Shedule {
         Duration difference = tomorrow.difference(dateTime);
         int differenceInDays = difference.inDays;
         total = total + differenceInDays;
+        daylist.add(item);
       });
     }
 
     double percentage = (count / total) * 100;
     double number = double.parse(percentage.toStringAsFixed(2));
     if (number.isNaN) {
-      print("Invalid");
     } else {
       rate = number / 100;
-      print("Percent $rate");
     }
-    return {"success": count, "total": total, "rate": rate};
+    return {"success": count, "total": total, "rate": rate, "daylist": daylist};
   }
 
   Map<String, dynamic> toDocompleted() {
@@ -699,17 +970,20 @@ class Shedule extends _$Shedule {
 
     AllTasks.clear();
     OnetimeShedule!.forEach((element) {
-      AllTasks.add(element);
-      total = total + 1;
-      if (element["count"] == 1) {
-        count = count + 1;
+      DateTime now = DateTime.now();
+      DateTime dateTime = DateTime.parse(element["from"]);
+      if (dateTime.isBefore(now)) {
+        AllTasks.add(element);
+        total = total + 1;
+        if (element["count"] == 1) {
+          count = count + 1;
+        }
       }
     });
 
     double percentage = (count / total) * 100;
     double number = double.parse(percentage.toStringAsFixed(2));
     if (number.isNaN) {
-      print("Invalid");
     } else {
       rate = number / 100;
     }
@@ -786,7 +1060,6 @@ class Shedule extends _$Shedule {
       mydays = timetable!["days"];
       instituteday = institutetable!["days"];
       OnetimeShedule = myData!["task"];
-      print("task");
 
       //    print(" timeline ${timetable}");
 
@@ -851,9 +1124,7 @@ class Shedule extends _$Shedule {
           isundayid = element["_id"];
         }
       });
-    } else {
-      print("NETWORK FAILED");
-    }
+    } else {}
   }
 
   Future<void> addSchedule(
@@ -940,11 +1211,8 @@ class Shedule extends _$Shedule {
         result();
         loading = false;
         state = true;
-
-        print("error");
       }
     } catch (error) {
-      print(error);
       loading = false;
       state = true;
     }
@@ -982,10 +1250,8 @@ class Shedule extends _$Shedule {
         loading = false;
         state = false;
         result();
-        print("error");
       }
     } catch (error) {
-      print(error);
       loading = false;
       state = false;
     }
@@ -1026,10 +1292,8 @@ class Shedule extends _$Shedule {
       if (_result.statusCode == 400) {
         loading = false;
         state = true;
-        print("error");
       }
     } catch (error) {
-      print(error);
       loading = false;
       state = true;
     }
@@ -1071,11 +1335,8 @@ class Shedule extends _$Shedule {
       if (_result.statusCode == 400) {
         loading = false;
         state = true;
-
-        print("error");
       }
     } catch (error) {
-      print(error);
       loading = false;
       state = true;
     }

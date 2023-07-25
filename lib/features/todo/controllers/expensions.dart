@@ -6,7 +6,7 @@ part 'expensions.g.dart';
 class PageExpension extends _$PageExpension {
   @override
   bool build() {
-    return false;
+    return true;
   }
 
   void setStart(bool newstate) {
@@ -18,7 +18,7 @@ class PageExpension extends _$PageExpension {
 class PageExpensionSzero extends _$PageExpensionSzero {
   @override
   bool build() {
-    return false;
+    return true;
   }
 
   void setStart(bool newstate) {

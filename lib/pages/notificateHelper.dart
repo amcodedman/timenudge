@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:timenudge/features/todo/pages/homepage.dart';
 import 'package:timenudge/pages/view_notification.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -52,9 +53,14 @@ class NotificationHelper {
     } else {
       debugPrint('notification done');
     }
-    Get.to(() => ViewNotification(
-          payload: payload,
-        ));
+    String tod = payload!.split('|')[2];
+    if (tod == "end") {
+      Get.to(() => HomePage());
+    } else {
+      Get.to(() => ViewNotification(
+            payload: payload,
+          ));
+    }
   }
 
   void requestIOSpermissions() {
@@ -113,11 +119,28 @@ class NotificationHelper {
     );
   }
 
+  scheduledNotificationend(int days, int hour, int minutes, int seconds, int id,
+      String task, String from, String to, int timetaken) async {
+    await flutternotifyplugin.zonedSchedule(
+      id,
+      "My task",
+      task,
+      _convertT(days, hour, minutes, seconds),
+      // tz.TZDateTime.now(tz.local).add(Duration(seconds: minutes)),
+      const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'your channel id', 'your channel name',
+              channelDescription: 'your channel description')),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: "${task}|${from}|${"end"}|${timetaken}|${0}",
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
   scheduledNotificationRepeat(int hour, int minutes, int id, String task,
       String from, String to, int timetaken, int dayweek) async {
-    print("printing");
-    print(
-        " h ${hour}   m ${minutes} id ${id} task ${task} from ${from} to ${to} timetaken ${timetaken} dayweek${dayweek}");
     await flutternotifyplugin.zonedSchedule(
       id,
       "My task",
@@ -135,13 +158,31 @@ class NotificationHelper {
     );
   }
 
+  scheduledNotificationRepeatend(int hour, int minutes, int id, String task,
+      String from, String to, int timetaken, int dayweek) async {
+    await flutternotifyplugin.zonedSchedule(
+      id,
+      "My task",
+      task,
+      _convertTimeday(hour, minutes, dayweek),
+      const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'your channel id', 'your channel name',
+              channelDescription: 'your channel description')),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: "${task}|${from}|${"end"}|${timetaken}|${1}|",
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
   tz.TZDateTime _convertT(int days, int hour, int minutes, int seconds) {
     late tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    print("nnoo: ${now}");
 
     tz.TZDateTime nowdue = now.add(
         Duration(days: days, hours: hour, minutes: minutes, seconds: seconds));
-    print("no: $nowdue");
+
     return nowdue;
   }
 
@@ -155,9 +196,6 @@ class NotificationHelper {
       scheduleDate = scheduleDate.add(const Duration(days: 1));
     }
 
-    print("weekday ${scheduleDate.weekday}  MY ${dayOfWeek}");
-    print(scheduleDate);
-    print(now);
     return scheduleDate;
   }
 

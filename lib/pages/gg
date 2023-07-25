@@ -1,0 +1,147 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:timenudge/pages/view_notification.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart';
+
+class NotificationHelper {
+  final WidgetRef ref;
+
+  NotificationHelper({required this.ref});
+
+  FlutterLocalNotificationsPlugin flutternotifyplugin =
+      FlutterLocalNotificationsPlugin();
+
+  String? selectnotifypayload;
+  final BehaviorSubject<String?> selectnotificationsubject =
+      BehaviorSubject<String?>();
+
+  initializeNotification() async {
+    _configureSelectNotificationSubject();
+    await _configureLocalTimeZone();
+
+    final DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+            onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+
+    final AndroidInitializationSettings androidInitializationSettings =
+        const AndroidInitializationSettings("timen");
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: androidInitializationSettings,
+            iOS: initializationSettingsIOS);
+
+    await flutternotifyplugin.initialize(initializationSettings,
+        onDidReceiveBackgroundNotificationResponse: (data) async {
+      if (data != null) {
+        debugPrint("notification payload ${data.payload}");
+      }
+      selectnotificationsubject.add(data.payload);
+    });
+  }
+
+  void requestIOSpermissions() {
+    flutternotifyplugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
+  }
+
+  Future<void> _configureLocalTimeZone() async {
+    tz.initializeTimeZones();
+    const String? timezone = "Europe/London";
+    tz.setLocalLocation(tz.getLocation(timezone));
+  }
+
+  Future onDidReceiveLocalNotification(
+      int id, String? title, String? body, String? payload) async {
+    showDialog(
+        context: ref.context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+              title: Text(title ?? "title"),
+              actions: [
+                CupertinoDialogAction(
+                    isDestructiveAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Close")),
+                CupertinoDialogAction(
+                    isDestructiveAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("View"))
+              ],
+            ));
+  }
+
+  scheduledNotification(int days, int hour, int minutes, int seconds, int id,
+      String task, String from, String to) async {
+    await flutternotifyplugin.zonedSchedule(
+      id,
+      "My task",
+      task,
+      tz.TZDateTime.now(tz.local).add(Duration(
+          days: days, hours: hour, minutes: minutes, seconds: seconds)),
+      // tz.TZDateTime.now(tz.local).add(Duration(seconds: minutes)),
+      const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'your channel id', 'your channel name',
+              channelDescription: 'your channel description')),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: "${task}|${from}|${to}|",
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
+  tz.TZDateTime _convertTime(int hour, int minutes) {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduleDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minutes);
+    if (scheduleDate.isBefore(now)) {
+      scheduleDate = scheduleDate.add(const Duration(days: 1));
+    }
+    return scheduleDate;
+  }
+
+  void _configureSelectNotificationSubject() {
+    selectnotificationsubject.stream.listen((String? payload) async {
+      var title = payload!.split('|')[0];
+
+      showDialog(
+          context: ref.context,
+          builder: (BuildContext context) => CupertinoAlertDialog(
+                title: Text("My Task"),
+                content: Text(title, textAlign: TextAlign.justify),
+                actions: [
+                  CupertinoDialogAction(
+                      isDestructiveAction: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Close")),
+                  CupertinoDialogAction(
+                      isDestructiveAction: true,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    ViewNotification(payload: payload))));
+                      },
+                      child: const Text("View"))
+                ],
+              ));
+    });
+  }
+}

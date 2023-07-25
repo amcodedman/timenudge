@@ -68,8 +68,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
     DateTime dueTime = DateTime.parse(duetimei);
     DateTime dueTimePlus12Hours = dueTime.add(const Duration(hours: 12));
     DateTime now = DateTime.now();
-    print(now);
-    print(dueTime);
+  ;
 
     return now.isAfter(dueTime) && now.isBefore(dueTimePlus12Hours);
   }
@@ -77,61 +76,55 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
   String mydelete = "Personal table";
   String myinstitutedelete = "Institution";
   String mysheduledelete = "One time schedule";
-
-  bool isTimeWithin12Hours(String duetime, String day) {
-    DateTime now = DateTime.now();
-    String dayName = DateFormat('EEEE').format(now);
-
-    bool checker = false;
-    if (dayName == day) {
-      DateTime dueTime = DateFormat('hh:mm a').parse(duetime);
-      DateTime dueTimePlus12Hours = dueTime.add(const Duration(hours: 12));
-
-      String formattedTime = DateFormat('hh:mm a').format(now);
-      DateTime datenow = DateFormat('hh:mm a').parse(formattedTime);
-
-      checker =
-          datenow.isAfter(dueTime) && datenow.isBefore(dueTimePlus12Hours);
-    }
-    return checker;
-  }
-
   String timeconvertor(dateString) {
     DateTime date = DateTime.parse(dateString);
     String formattedDate = DateFormat('hh:mm a ').format(date);
     return formattedDate;
   }
 
-  Icon getTimeStatus(String time) {
-    DateFormat format = DateFormat('hh:mm a');
-    DateTime dateTime1 = format.parse(time);
-
+  bool isTimeWithin12Hours(String duetime, String day) {
     DateTime now = DateTime.now();
-    Icon timeicon = const Icon(
+    String dayName = DateFormat('EEEE').format(now);
+    bool checker = false;
+    if (dayName == day) {
+      DateTime dueTime = DateFormat('hh:mm a').parse(duetime);
+      DateTime dueTimePlus12Hours = dueTime.add(const Duration(hours: 12));
+      String formattedTime = DateFormat('hh:mm a').format(now);
+      DateTime datenow = DateFormat('hh:mm a').parse(formattedTime);
+      checker =
+          datenow.isAfter(dueTime) && datenow.isBefore(dueTimePlus12Hours);
+    }
+    return checker;
+  }
+
+  Icon getTimeStatus(String duetime, String day) {
+    Icon checkicon = const Icon(
       FontAwesome.check_circle,
       size: 12,
-      color: Color.fromARGB(255, 1, 91, 114),
+      color: Color.fromARGB(255, 147, 198, 4),
     );
-    if (dateTime1.isBefore(now)) {
-      timeicon = const Icon(
-        FontAwesome.check_circle,
-        size: 12,
-        color: Color.fromARGB(255, 1, 91, 114),
-      );
-    } else if (dateTime1.isAfter(now)) {
-      timeicon = const Icon(
-        FontAwesome.clock_o,
-        size: 12,
-        color: Color.fromARGB(255, 35, 14, 110),
-      );
-    } else {
-      timeicon = const Icon(
-        FontAwesome.bolt,
-        size: 12,
-        color: Color.fromARGB(255, 35, 14, 73),
-      );
+    Icon timeicon = const Icon(FontAwesome.clock_o,
+        size: 12, color: Color.fromARGB(255, 239, 239, 239));
+    Icon? iconstatus = timeicon;
+    DateTime now = DateTime.now();
+    String dayName = DateFormat('EEEE').format(now);
+    bool checker = false;
+    if (dayName == day) {
+      DateTime dueTime = DateFormat('hh:mm a').parse(duetime);
+      DateTime dueTimePlus12Hours = dueTime.add(const Duration(hours: 12));
+      String formattedTime = DateFormat('hh:mm a').format(now);
+      DateTime datenow = DateFormat('hh:mm a').parse(formattedTime);
+      checker =
+          datenow.isAfter(dueTime) && datenow.isBefore(dueTimePlus12Hours);
+    
+      if (checker) {
+        iconstatus != checkicon;
+      } else {
+        iconstatus != timeicon;
+      }
     }
-    return timeicon;
+
+    return iconstatus!;
   }
 
   bool getDue(String time) {
@@ -176,11 +169,8 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
       appBar: AppBar(
         actions: [
           IconButton(
-              onPressed: () => {ref.read(sheduleProvider.notifier).result()},
-              icon: const Icon(FontAwesome.refresh, color: AppConsts.kBKDark)),
-          IconButton(
-            icon:
-                const Icon(Icons.add_circle_outline, color: AppConsts.kBKDark),
+            icon: const Icon(Icons.add_circle_outline,
+                color: Color.fromARGB(255, 181, 194, 0)),
             onPressed: () {
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) {
@@ -649,40 +639,10 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                       children: [
                                         SizedBox(
                                             child: Column(
-                                          children: [
-                                            Reusables(
-                                                text: (dateconvertor(ref
-                                                        .watch(sheduleProvider
-                                                            .notifier)
-                                                        .OnetimeShedule![index]
-                                                    ["from"])),
-                                                style: appStyle(
-                                                    12,
-                                                    AppConsts.klight,
-                                                    FontWeight.bold)),
-                                            getTimeStatusOnetime(
-                                                (ref
-                                                        .watch(sheduleProvider
-                                                            .notifier)
-                                                        .OnetimeShedule![index]
-                                                    ["from"])),
-                                            const Heightspacer(value: 5),
-                                            Reusables(
-                                                text: (dateconvertor(ref
-                                                        .watch(sheduleProvider
-                                                            .notifier)
-                                                        .OnetimeShedule![index]
-                                                    ["to"])),
-                                                style: appStyle(
-                                                    12,
-                                                    AppConsts.klight,
-                                                    FontWeight.bold)),
-                                          ],
-                                        )),
-                                        const WidthSpacer(value: 20),
-                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.start,
                                           children: [
                                             Reusables(
                                                 text: ref
@@ -691,10 +651,56 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                                         .OnetimeShedule![index]
                                                     ["title"],
                                                 style: appStyle(
-                                                    12,
+                                                    8,
                                                     AppConsts.klight,
                                                     FontWeight.bold)),
-                                            const WidthSpacer(value: 20),
+                                            Row(
+                                              children: [
+                                                Reusables(
+                                                    text: (dateconvertor(ref
+                                                            .watch(
+                                                                sheduleProvider
+                                                                    .notifier)
+                                                            .OnetimeShedule![
+                                                        index]["from"])),
+                                                    style: appStyle(
+                                                        8,
+                                                        AppConsts.klight,
+                                                        FontWeight.bold)),
+                                                Reusables(
+                                                    text: " To ",
+                                                    style: appStyle(
+                                                        9,
+                                                        Color.fromARGB(
+                                                            255, 77, 157, 242),
+                                                        FontWeight.bold)),
+                                                Reusables(
+                                                    text: (dateconvertor(ref
+                                                            .watch(
+                                                                sheduleProvider
+                                                                    .notifier)
+                                                            .OnetimeShedule![
+                                                        index]["to"])),
+                                                    style: appStyle(
+                                                        8,
+                                                        AppConsts.klight,
+                                                        FontWeight.bold)),
+                                              ],
+                                            ),
+                                            getTimeStatusOnetime(
+                                                (ref
+                                                        .watch(sheduleProvider
+                                                            .notifier)
+                                                        .OnetimeShedule![index]
+                                                    ["from"])),
+                                            const Heightspacer(value: 5),
+                                          ],
+                                        )),
+                                        const WidthSpacer(value: 20),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
                                             const WidthSpacer(value: 20),
                                             GestureDetector(
                                                 child: const Icon(Icons.delete,
@@ -755,7 +761,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                                                     255, 227, 245, 70),
                                                                 size: 18)))
                                                 : const Icon(Icons.timer,
-                                                    color: Colors.blue,
+                                                    color: Color.fromARGB(255, 247, 247, 247),
                                                     size: 15),
                                             const WidthSpacer(value: 15),
                                           ],
@@ -782,47 +788,60 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
             itemCount: tasks.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
+                padding: const EdgeInsets.only(left: 10, top: 10),
                 margin: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: AppConsts.kBKDark,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
                   boxShadow: [
                     BoxShadow(
-                      color: Color.fromARGB(255, 206, 206, 206)
+                      color: const Color.fromARGB(255, 206, 206, 206)
                           .withOpacity(0.3), // Shadow color
                       spreadRadius: 5, // Spread radius
                       blurRadius: 5, // Blur radius
-                      offset: Offset(0, 2), // Offset
+                      offset: const Offset(0, 2), // Offset
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.all(5),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
                           child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Reusables(
-                              text: (tasks[index]["from"]),
-                              style: appStyle(
-                                  12, AppConsts.klight, FontWeight.bold)),
-                          getTimeStatus((tasks[index]["from"])),
+                          Text(
+                            tasks[index]["title"],
+                            style: appStyle(9, Color.fromARGB(255, 215, 219, 0),
+                                FontWeight.bold),
+                          ),
+                          Row(
+                            children: [
+                              Reusables(
+                                  text: (tasks[index]["from"]),
+                                  style: appStyle(
+                                      8, AppConsts.klight, FontWeight.bold)),
+                              const WidthSpacer(value: 10),
+                              Reusables(
+                                  text: " To ",
+                                  style: appStyle(
+                                      8, AppConsts.klight, FontWeight.bold)),
+                              Reusables(
+                                  text: (tasks[index]["to"]),
+                                  style: appStyle(
+                                      8, AppConsts.klight, FontWeight.bold)),
+                            ],
+                          ),
+                          getTimeStatus(tasks[index]["from"], day),
                           const Heightspacer(value: 5),
-                          Reusables(
-                              text: (tasks[index]["to"]),
-                              style: appStyle(
-                                  12, AppConsts.klight, FontWeight.bold)),
                         ],
                       )),
                       const WidthSpacer(value: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Reusables(
-                              text: tasks[index]["title"],
-                              style: appStyle(
-                                  12, AppConsts.klight, FontWeight.bold)),
                           const WidthSpacer(value: 30),
                           GestureDetector(
                               child: const Icon(Icons.delete,
@@ -874,7 +893,7 @@ class _Shedule extends ConsumerState<Shedule> with TickerProviderStateMixin {
                                                   255, 227, 245, 70),
                                               size: 18)))
                               : const Icon(Icons.timer,
-                                  color: Color.fromARGB(255, 11, 36, 56),
+                                  color: Color.fromARGB(255, 255, 255, 255),
                                   size: 15),
                           const WidthSpacer(value: 15),
                         ],

@@ -52,6 +52,17 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
     if (dateString.isNotEmpty) {
       DateTime date = DateTime.parse(dateString);
 
+      dat = DateFormat('hh:mm a ').format(date);
+    }
+
+    return dat;
+  }
+
+  String dateShlong(String dateString) {
+    String dat = "";
+    if (dateString.isNotEmpty) {
+      DateTime date = DateTime.parse(dateString);
+
       dat = DateFormat('E MMMM d hh:mm a ').format(date);
     }
 
@@ -86,7 +97,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
     if (mydata["count"] == 1) {
       statuss = true;
     }
-    print("countttt ${mydata["count"]}");
+  
 
     return statuss;
   }
@@ -127,7 +138,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                           color: AppConsts.kBKDark,
                         ),
                         onChange: (value) {
-                          print(searchtext);
+                       
                           setState(() {
                             searchtext = value;
                           });
@@ -219,21 +230,20 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           return Padding(
-                                              padding: EdgeInsets.all(5),
+                                              padding: const EdgeInsets.all(5),
                                               child: Todotile(
                                                   text: "One Time shedule",
                                                   text1: ref
                                                           .watch(sheduleProvider
                                                               .notifier)
-                                                          .getshedulefilter(searchtext)[index]
-                                                      ["title"],
-                                                  start: dateSh(ref
-                                                          .watch(sheduleProvider
-                                                              .notifier)
                                                           .getshedulefilter(
                                                               searchtext)[index]
-                                                      ["from"]),
-                                                  end: dateSh(ref
+                                                      ["title"],
+                                                  start: dateShlong(
+                                                      ref.watch(sheduleProvider.notifier).getshedulefilter(
+                                                              searchtext)[index]
+                                                          ["from"]),
+                                                  end: dateShlong(ref
                                                       .watch(sheduleProvider.notifier)
                                                       .getshedulefilter(searchtext)[index]["to"]),
                                                   switcher: Transform.scale(
@@ -300,13 +310,13 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                                                                     .notifier)
                                                                 .getshedulepending()[index]
                                                             ["title"],
-                                                        start: dateSh(ref
+                                                        start: dateShlong(ref
                                                                 .watch(
                                                                     sheduleProvider
                                                                         .notifier)
                                                                 .getshedulepending()[index]
                                                             ["from"]),
-                                                        end: dateSh(ref
+                                                        end: dateShlong(ref
                                                             .watch(
                                                                 sheduleProvider
                                                                     .notifier)
@@ -386,11 +396,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                                                                     .getshedulecompleted()[index]),
                                                                 onChanged:
                                                                     (value) {
-                                                                  print(getStatus(ref
-                                                                      .watch(sheduleProvider
-                                                                          .notifier)
-                                                                      .getshedulecompleted()[index]));
-                                                                  setState(() {
+                                                                 setState(() {
                                                                     switchv =
                                                                         !switchv;
                                                                   });
@@ -405,7 +411,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                       const Heightspacer(value: 10),
                       Expensiontile(
                         text1: "Tomorrow tasks",
-                        text2: "tomorrow tasks are how here",
+                        text2: "",
                         onExpensionchange: (bool epend) {
                           ref
                               .read(pageExpensionProvider.notifier)
@@ -415,7 +421,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                             ? const Padding(
                                 padding: EdgeInsets.only(right: 12),
                                 child: Icon(AntDesign.circledown,
-                                    color: AppConsts.kBluelight),
+                                    color: Color.fromARGB(255, 191, 201, 6)),
                               )
                             : const Padding(
                                 padding: EdgeInsets.only(right: 12),
@@ -447,7 +453,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                                               .getshedulependingtomorrow()[0]
                                           ["to"]),
                                       switcher: SizedBox(
-                                        width: 65,
+                                        width: 35,
                                         child: Text(""),
                                       )),
                                 )
@@ -469,7 +475,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                                           .watch(sheduleProvider.notifier)
                                           .getshedulepending()[1]["to"]),
                                       switcher: const SizedBox(
-                                          width: 65, child: Text(""))))
+                                          width: 35, child: Text(""))))
                               : Text(""),
                           gettasks(ref.watch(sheduleProvider.notifier).getshedulepending())
                                       .length >
@@ -505,7 +511,7 @@ class _LandPage extends ConsumerState<LandPage> with TickerProviderStateMixin {
                             ? const Padding(
                                 padding: EdgeInsets.only(right: 12),
                                 child: Icon(AntDesign.circledown,
-                                    color: AppConsts.kBluelight),
+                                    color: Color.fromARGB(255, 173, 173, 2)),
                               )
                             : const Padding(
                                 padding: EdgeInsets.only(right: 12),

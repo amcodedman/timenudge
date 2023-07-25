@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timenudge/common/ultils/appstyle.dart';
 import 'package:timenudge/common/ultils/constants.dart';
 import 'package:timenudge/common/ultils/resuables.dart';
@@ -27,6 +28,55 @@ class AddShedule extends ConsumerStatefulWidget {
 }
 
 class _AddShedule extends ConsumerState<AddShedule> {
+  void showOutputDialog(
+    BuildContext context,
+    String task,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Reusables(
+              text: "Prompt: Select different time",
+              style: appStyle(11, AppConsts.kred, FontWeight.bold)),
+          content: Text(
+            "Sorry, but sheduling Task may not be feasible since within this time range as '$task' lecture will  be onging by then.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  timeOfshedule = TimeOfDay.now();
+                });
+
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
+                      color: AppConsts.kred,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [Text('ok')])),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  late SharedPreferences prefs;
+  Future<void> loadDetails() async {
+    prefs = await SharedPreferences.getInstance();
+    print(prefs?.getString("firstname").toString());
+    setState(() {
+      notice = prefs.getInt("notice");
+    });
+  }
+
+  late int? notice = 0;
   late bool success = false;
   late String sheduletitle;
   TimeOfDay timeOfshedule = TimeOfDay.now();
@@ -328,7 +378,8 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                   child: Row(children: [
                                     const Icon(FontAwesome.clock_o),
                                     const WidthSpacer(value: 10),
-                                    const Text("Choose"),
+                                    const Text("Choose",
+                                        style: TextStyle(fontSize: 12)),
                                     const WidthSpacer(value: 20),
                                     Reusables(
                                         text: selectedDateTime != null
@@ -338,9 +389,8 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                                 .dateSh()
                                             : "",
                                         style: appStyle(
-                                            17,
-                                            const Color.fromARGB(
-                                                255, 23, 7, 103),
+                                            12,
+                                            Color.fromARGB(255, 26, 22, 44),
                                             FontWeight.bold))
                                   ]),
                                 ),
@@ -379,7 +429,8 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                   child: Row(children: [
                                     const Icon(FontAwesome.clock_o),
                                     const WidthSpacer(value: 10),
-                                    const Text("Choose"),
+                                    const Text("Choose",
+                                        style: TextStyle(fontSize: 12)),
                                     const WidthSpacer(value: 20),
                                     Reusables(
                                         text: selectedDateTimeTo != null
@@ -390,9 +441,8 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                                 .dateSh()
                                             : "",
                                         style: appStyle(
-                                            17,
-                                            const Color.fromARGB(
-                                                255, 23, 7, 103),
+                                            12,
+                                            Color.fromARGB(255, 36, 30, 64),
                                             FontWeight.bold))
                                   ]),
                                 ),
@@ -519,36 +569,71 @@ class _AddShedule extends ConsumerState<AddShedule> {
 
                                     notifyhelper.scheduledNotification(
                                         ref.read(sheduleProvider.notifier).dates(
+                                            notice!,
                                             selectedDateTime!.toString(),
                                             selectedDateTimeTo.toString())[0],
+                                        ref.read(sheduleProvider.notifier).dates(
+                                            notice!,
+                                            selectedDateTime!.toString(),
+                                            selectedDateTimeTo.toString())[1],
+                                        ref.read(sheduleProvider.notifier).dates(
+                                            notice!,
+                                            selectedDateTime!.toString(),
+                                            selectedDateTimeTo.toString())[2],
                                         ref
                                             .read(sheduleProvider.notifier)
                                             .dates(
-                                                selectedDateTime!.toString(),
-                                                selectedDateTimeTo
-                                                    .toString())[1],
-                                        ref
-                                            .read(sheduleProvider.notifier)
-                                            .dates(
-                                                selectedDateTime!.toString(),
-                                                selectedDateTimeTo
-                                                    .toString())[2],
-                                        ref
-                                            .read(sheduleProvider.notifier)
-                                            .dates(
+                                                notice!,
                                                 selectedDateTime!.toString(),
                                                 selectedDateTimeTo
                                                     .toString())[3],
                                         randonid(),
-                                        sheduletitle,
+                                        "$sheduletitle start at ${selectedDateTime!.toString()}",
                                         selectedDateTime!.toString(),
                                         selectedDateTimeTo.toString(),
                                         ref
                                             .read(sheduleProvider.notifier)
                                             .dates(
+                                                notice!,
                                                 selectedDateTime!.toString(),
                                                 selectedDateTimeTo
                                                     .toString())[4]);
+
+                                    notifyhelper.scheduledNotificationend(
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesend(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo
+                                                    .toString())[0],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesend(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo
+                                                    .toString())[1],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesend(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo
+                                                    .toString())[2],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesend(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo
+                                                    .toString())[3],
+                                        randonid(),
+                                        sheduletitle +
+                                            " shedule just ended, You can take  a break. See u later,Enjoy!!",
+                                        selectedDateTime!.toString(),
+                                        selectedDateTimeTo.toString(),
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesend(
+                                                selectedDateTime!.toString(),
+                                                selectedDateTimeTo.toString())[4]);
                                   },
                                   child: Container(
                                       height: 40,
@@ -586,7 +671,6 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                           ))))
                               : MaterialButton(
                                   onPressed: () {
-                                    print("Press");
                                     setState(() {
                                       ref
                                           .read(sheduleProvider.notifier)
@@ -606,38 +690,66 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                         ref
                                             .read(sheduleProvider.notifier)
                                             .datesrepeat(
+                                                notice!,
                                                 timeOfshedule.format(context),
                                                 endshedule.format(context),
                                                 boxtextD)[0],
                                         ref
                                             .read(sheduleProvider.notifier)
                                             .datesrepeat(
+                                                notice!,
                                                 timeOfshedule.format(context),
                                                 endshedule.format(context),
                                                 boxtextD)[1],
                                         randonid(),
-                                        sheduletitle,
+                                        "$sheduletitle start at ${timeOfshedule.format(context)}",
                                         timeOfshedule.format(context),
                                         endshedule.format(context),
                                         ref
                                             .read(sheduleProvider.notifier)
                                             .datesrepeat(
+                                                notice!,
                                                 timeOfshedule.format(context),
                                                 endshedule.format(context),
                                                 boxtextD)[2],
                                         ref
                                             .read(sheduleProvider.notifier)
                                             .datesrepeat(
+                                                notice!,
                                                 timeOfshedule.format(context),
                                                 endshedule.format(context),
                                                 boxtextD)[3]);
 
-                                    print(ref
-                                        .read(sheduleProvider.notifier)
-                                        .datesrepeat(
-                                            timeOfshedule.format(context),
-                                            endshedule.format(context),
-                                            boxtextD));
+                                    notifyhelper.scheduledNotificationRepeatend(
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesrepeatend(
+                                                timeOfshedule.format(context),
+                                                endshedule.format(context),
+                                                boxtextD)[0],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesrepeatend(
+                                                timeOfshedule.format(context),
+                                                endshedule.format(context),
+                                                boxtextD)[1],
+                                        randonid(),
+                                        sheduletitle +
+                                            " shedule just ended, You can take  a break. See u later,Enjoy!!",
+                                        timeOfshedule.format(context),
+                                        endshedule.format(context),
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesrepeatend(
+                                                timeOfshedule.format(context),
+                                                endshedule.format(context),
+                                                boxtextD)[2],
+                                        ref
+                                            .read(sheduleProvider.notifier)
+                                            .datesrepeatend(
+                                                timeOfshedule.format(context),
+                                                endshedule.format(context),
+                                                boxtextD)[3]);
                                   },
                                   child: Container(
                                       height: 40,
@@ -673,7 +785,7 @@ class _AddShedule extends ConsumerState<AddShedule> {
                                                       FontWeight.bold)),
                                             ],
                                           )))))),
-              Heightspacer(value: 10),
+              const Heightspacer(value: 10),
               Center(
                 child: Text(
                   ref.watch(sheduleProvider.notifier).addmessage,
@@ -742,6 +854,13 @@ class _AddShedule extends ConsumerState<AddShedule> {
           );
         }).then((value) => setState(() {
           endshedule = value!;
+          if (ref.read(sheduleProvider.notifier).weekdayschecker(
+              timeOfshedule.format(context), boxtextD)["check"]) {
+            showOutputDialog(
+                context,
+                ref.read(sheduleProvider.notifier).weekdayschecker(
+                    timeOfshedule.format(context), boxtextD)["task"]);
+          }
         }));
   }
 

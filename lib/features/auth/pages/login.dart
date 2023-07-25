@@ -9,6 +9,7 @@ import 'package:timenudge/common/widgets/customerextfield.dart';
 import 'package:timenudge/common/widgets/heightspacer.dart';
 import 'package:timenudge/common/widgets/widthspacer.dart';
 import 'package:timenudge/features/auth/pages/createaccount.dart';
+import 'package:timenudge/features/auth/pages/parentcarelog.dart';
 import 'package:timenudge/features/auth/pages/resetpassword.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timenudge/features/todo/pages/homepage.dart';
@@ -113,12 +114,12 @@ class _Login extends ConsumerState<Login> {
                   ref.read(usersProvider.notifier).errormessage,
                   style: appStyle(13, AppConsts.kred, FontWeight.bold),
                 )),
-            const Heightspacer(value: 20),
+            const Heightspacer(value: 10),
             Row(
               children: [
                 Text(
                   "You dont have an account ?",
-                  style: appStyle(13, AppConsts.kBluelight, FontWeight.normal),
+                  style: appStyle(10, AppConsts.kBluelight, FontWeight.normal),
                 ),
                 const WidthSpacer(value: 10),
                 CustomBtn(
@@ -144,10 +145,33 @@ class _Login extends ConsumerState<Login> {
               },
               child: Text(
                 "forgot Password ?",
-                style: appStyle(15, AppConsts.kred, FontWeight.normal),
+                style: appStyle(10, AppConsts.kred, FontWeight.normal),
               ),
             ),
-            const Heightspacer(value: 30)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "To access and view your personal progress or your children's study schedule progress, simply click on 'Moniton' and use the provided special key",
+                  style: TextStyle(fontSize: 9),
+                ),
+                Heightspacer(value: 10),
+                CustomBtn(
+                    onTap: () {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                        return Monitorlog();
+                      }));
+                    },
+                    height: 30,
+                    width: 80,
+                    color2: Color.fromARGB(255, 255, 255, 255),
+                    color3: Color.fromARGB(86, 4, 1, 13),
+                    text1: "Monitor ")
+              ],
+            ),
+            Heightspacer(value: 20),
           ],
         ),
       )),

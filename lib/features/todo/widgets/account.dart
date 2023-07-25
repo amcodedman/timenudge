@@ -24,7 +24,7 @@ class _Account extends ConsumerState<MyAccout> {
   late SharedPreferences prefs;
   Future<void> loadDetails() async {
     prefs = await SharedPreferences.getInstance();
-    print(prefs?.getString("firstname").toString());
+
     setState(() {
       String? firstn = prefs.getString("firstname").toString();
       String? lastn = prefs.getString("lastname").toString();
@@ -33,6 +33,8 @@ class _Account extends ConsumerState<MyAccout> {
       user_name = prefs.getString("username").toString();
       institution = prefs.getString("company").toString();
       department = prefs.getString("department").toString();
+      notice = prefs.getInt("notice").toString();
+      mykey = prefs.getString("mykey").toString();
     });
   }
 
@@ -53,9 +55,32 @@ class _Account extends ConsumerState<MyAccout> {
   late String? user_email = "";
   late String? institution = "";
   late String? department = "";
+  late String? notice = " 0";
+  late String? mykey = "";
+
+  var boxtext = "Start 5 minites earlier";
+
+  void onChange(String selectedValue) {
+    setState(() {
+      boxtext = selectedValue;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<String> Lists = const [
+      "Start when time due",
+      "Start 5 minites earlier",
+      "Start 10 minites earlier",
+      "Start 15 minites earlier",
+      "Start 30 minites earlier"
+    ];
+    List<DropdownMenuItem<String>> items = Lists.map((String value) {
+      return DropdownMenuItem<String>(
+        child: Text(value),
+        value: value,
+      );
+    }).toList();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -75,12 +100,14 @@ class _Account extends ConsumerState<MyAccout> {
                   // Adjust the left position as needed
                   child: CircleAvatar(
                 radius: 80,
-                backgroundImage: AssetImage("assets/images/person.png"),
+                backgroundImage: AssetImage(
+                  "assets/images/person.png",
+                ),
               )),
               Container(
                 padding: const EdgeInsets.all(5),
+                margin: EdgeInsets.only(left: 15),
                 alignment: Alignment.center,
-                width: AppConsts.kwidth * 0.8.w,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     boxShadow: [
@@ -92,130 +119,221 @@ class _Account extends ConsumerState<MyAccout> {
                         offset: const Offset(0, 3), // Offset
                       ),
                     ]),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Reusables(
-                          text: "Name",
-                          style: appStyle(
-                              15, AppConsts.kBluelight, FontWeight.bold)),
-                      Reusables(
-                          text: myname!,
-                          style:
-                              appStyle(14, AppConsts.kGreyBk, FontWeight.bold)),
-                    ]),
+                child: Row(children: [
+                  Reusables(
+                      text: "Name ",
+                      style:
+                          appStyle(13, AppConsts.kBluelight, FontWeight.bold)),
+                  Reusables(
+                      text: myname!,
+                      style: appStyle(14, AppConsts.kGreyBk, FontWeight.bold)),
+                ]),
               ),
               Container(
+                margin: EdgeInsets.only(left: 15),
                 padding: const EdgeInsets.all(5),
                 alignment: Alignment.center,
-                width: AppConsts.kwidth * 0.8.w,
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     boxShadow: [
                       BoxShadow(
-                        color: Color.fromARGB(255, 247, 242, 242)
+                        color: Color.fromARGB(255, 252, 252, 252)
                             .withOpacity(0.5), // Shadow color
                         spreadRadius: 5, // Spread radius
                         blurRadius: 7, // Blur radius
                         offset: const Offset(0, 3), // Offset
                       ),
                     ]),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Reusables(
-                          text: "User name",
-                          style: appStyle(
-                              15, AppConsts.kBluelight, FontWeight.bold)),
-                      Reusables(
-                          text: user_name!,
-                          style:
-                              appStyle(14, AppConsts.kGreyBk, FontWeight.bold)),
-                    ]),
+                child: Row(children: [
+                  Reusables(
+                      text: "User name ",
+                      style:
+                          appStyle(10, AppConsts.kBluelight, FontWeight.bold)),
+                  Reusables(
+                      text: user_name!,
+                      style: appStyle(10, AppConsts.kGreyBk, FontWeight.bold)),
+                ]),
               ),
               Container(
+                margin: EdgeInsets.only(left: 15),
                 padding: const EdgeInsets.all(5),
                 alignment: Alignment.center,
-                width: AppConsts.kwidth * 0.8.w,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color.fromARGB(255, 231, 230, 230)
+                        color: Color.fromARGB(255, 255, 255, 255)
                             .withOpacity(0.5), // Shadow color
                         spreadRadius: 5, // Spread radius
                         blurRadius: 7, // Blur radius
                         offset: const Offset(0, 3), // Offset
                       ),
                     ]),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Reusables(
-                          text: "Email",
-                          style: appStyle(
-                              15, AppConsts.kBluelight, FontWeight.bold)),
-                      Reusables(
-                          text: user_email!,
-                          style:
-                              appStyle(14, AppConsts.kGreyBk, FontWeight.bold)),
-                    ]),
+                child: Row(children: [
+                  Reusables(
+                      text: "Email ",
+                      style:
+                          appStyle(10, AppConsts.kBluelight, FontWeight.bold)),
+                  Reusables(
+                      text: user_email!,
+                      style: appStyle(10, AppConsts.kGreyBk, FontWeight.bold)),
+                ]),
               ),
               Container(
+                margin: EdgeInsets.only(left: 15),
                 padding: const EdgeInsets.all(5),
                 alignment: Alignment.center,
-                width: AppConsts.kwidth * 0.8.w,
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     boxShadow: [
                       BoxShadow(
-                        color: Color.fromARGB(255, 247, 241, 241)
+                        color: Color.fromARGB(255, 255, 255, 255)
                             .withOpacity(0.5), // Shadow color
                         spreadRadius: 5, // Spread radius
                         blurRadius: 7, // Blur radius
                         offset: const Offset(0, 3), // Offset
                       ),
                     ]),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Reusables(
-                          text: "Institution",
-                          style: appStyle(
-                              15, AppConsts.kBluelight, FontWeight.bold)),
-                      Reusables(
-                          text: institution!,
-                          style:
-                              appStyle(14, AppConsts.kGreyBk, FontWeight.bold)),
-                    ]),
+                child: Row(children: [
+                  Reusables(
+                      text: "Institution ",
+                      style:
+                          appStyle(15, AppConsts.kBluelight, FontWeight.bold)),
+                  Reusables(
+                      text: institution!,
+                      style: appStyle(14, AppConsts.kGreyBk, FontWeight.bold)),
+                ]),
               ),
               Container(
+                margin: EdgeInsets.only(left: 15),
                 padding: const EdgeInsets.all(10),
                 alignment: Alignment.center,
-                width: AppConsts.kwidth * 0.8.w,
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color.fromARGB(255, 231, 230, 230)
+                        color: Color.fromARGB(255, 255, 255, 255)
                             .withOpacity(0.5), // Shadow color
                         spreadRadius: 5, // Spread radius
                         blurRadius: 7, // Blur radius
                         offset: const Offset(0, 3), // Offset
                       ),
                     ]),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Reusables(
-                          text: "Department",
-                          style: appStyle(
-                              15, AppConsts.kBluelight, FontWeight.bold)),
-                      Reusables(
-                          text: department!,
-                          style:
-                              appStyle(14, AppConsts.kGreyBk, FontWeight.bold)),
+                child: Row(children: [
+                  Reusables(
+                      text: "Department ",
+                      style:
+                          appStyle(10, AppConsts.kBluelight, FontWeight.bold)),
+                  Reusables(
+                      text: department!,
+                      style: appStyle(10, AppConsts.kGreyBk, FontWeight.bold)),
+                ]),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 15),
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(255, 255, 255, 255)
+                            .withOpacity(0.5), // Shadow color
+                        spreadRadius: 5, // Spread radius
+                        blurRadius: 7, // Blur radius
+                        offset: const Offset(0, 3), // Offset
+                      ),
                     ]),
+                child: Row(children: [
+                  Reusables(
+                      text: "Support Care Key ",
+                      style:
+                          appStyle(10, AppConsts.kBluelight, FontWeight.bold)),
+                  Reusables(
+                      text: mykey!,
+                      style: appStyle(10, Color.fromARGB(255, 19, 194, 0),
+                          FontWeight.bold)),
+                ]),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 15),
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(255, 255, 255, 255)
+                            .withOpacity(0.5), // Shadow color
+                        spreadRadius: 5, // Spread radius
+                        blurRadius: 7, // Blur radius
+                        offset: const Offset(0, 3), // Offset
+                      ),
+                    ]),
+                child: Row(children: [
+                  Reusables(
+                      text: "Nofifications",
+                      style:
+                          appStyle(10, AppConsts.kBluelight, FontWeight.bold)),
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          dropdownColor: Color.fromARGB(255, 234, 234, 234),
+                          items: items,
+                          style: Theme.of(context).textTheme.bodySmall,
+                          onChanged: (String? selectedValue) {
+                            setState(() {
+                              onChange(selectedValue!);
+                              ref
+                                  .read(usersProvider.notifier)
+                                  .notificationsetting(boxtext);
+                            });
+                          },
+                          value: boxtext,
+                        ),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromARGB(255, 250, 250, 252)
+                                .withOpacity(0.5), // Shadow color
+                            spreadRadius: 5, // Spread radius
+                            blurRadius: 7, // Blur radius
+                            offset: Offset(0, 3), // Offset
+                          ),
+                        ],
+                        color: Color.fromARGB(255, 255, 252, 252),
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                  ),
+                ]),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 15),
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(255, 255, 255, 255)
+                            .withOpacity(0.5), // Shadow color
+                        spreadRadius: 5, // Spread radius
+                        blurRadius: 7, // Blur radius
+                        offset: const Offset(0, 3), // Offset
+                      ),
+                    ]),
+                child: Row(children: [
+                  Reusables(
+                      text: "Nofication status ",
+                      style:
+                          appStyle(10, AppConsts.kBluelight, FontWeight.bold)),
+                  Reusables(
+                      text: notice! + " minutes to time",
+                      style: appStyle(10, AppConsts.kGreyBk, FontWeight.bold)),
+                ]),
               ),
               MaterialButton(
                   onPressed: () {

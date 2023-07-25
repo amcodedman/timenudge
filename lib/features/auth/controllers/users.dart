@@ -97,7 +97,10 @@ class Users extends _$Users {
         prefs!.setString("email", account["email"]);
         prefs!.setString("institution", account["company"]);
         prefs!.setString("department", account["department"]);
-        print(prefs!.getString("email"));
+        prefs!.setString("mykey", account["parentcare"]);
+
+        prefs!.setInt("notice", 0);
+        print(account);
 
         state = false;
 
@@ -121,6 +124,85 @@ class Users extends _$Users {
         print('Error: $e');
       }
       state = false;
+    }
+  }
+
+  Future<void> loginmonitor(String key) async {
+    print("ddddddddddddddddddddddd ${key}");
+    errormessage = "";
+    prefs = await SharedPreferences.getInstance();
+    _dio.options.baseUrl = "https://timenudgeservice.onrender.com/";
+    state = true;
+    try {
+      var _result = await _dio.post(
+        'user/parentcare',
+        data: {
+          "parentcare": key,
+        },
+      );
+      if (_result.statusCode == 200) {
+        account = _result.data;
+        prefs!.setString("id", account["_id"]);
+        prefs!.setString("firstname", account["firstname"]);
+        prefs!.setString("lastname", account["lastname"]);
+
+        prefs!.setString("institution", account["company"]);
+        prefs!.setString("department", account["department"]);
+        prefs!.setString("mykey", account["parentcare"]);
+        prefs!.setInt("notice", 0);
+        print(account);
+
+        state = false;
+      } else {
+        // Handle non-200 status code
+        print('Login request failed with status code: ${_result}');
+        state = false;
+      }
+    } catch (e) {
+      if (e is DioError) {
+        state = false;
+        if (e.response != null) {
+          print('Error: ${e.response!.data["msg"].toString()}');
+          errormessage = e.response!.data["msg"].toString();
+        } else {
+          print('Error: ${e.message}');
+        }
+      } else {
+        print('Error: $e');
+      }
+      state = false;
+    }
+  }
+
+  Future<void> notificationsetting(
+    String type,
+  ) async {
+    prefs = await SharedPreferences.getInstance();
+
+    if (type == "Start when time due") {
+      prefs!.setInt("notice", 0);
+
+      print(prefs!.getInt("notice"));
+    }
+    if (type == "Start 5 minites earlier") {
+      prefs!.setInt("notice", 5);
+
+      print(prefs!.getInt("notice"));
+    }
+    if (type == "Start 10 minites earlier") {
+      prefs!.setInt("notice", 10);
+
+      print(prefs!.getInt("notice"));
+    }
+    if (type == "Start 15 minites earlier") {
+      prefs!.setInt("notice", 15);
+
+      print(prefs!.getInt("notice"));
+    }
+    if (type == "Start 30 minites earlier") {
+      prefs!.setInt("notice", 30);
+
+      print(prefs!.getInt("notice"));
     }
   }
 

@@ -15,7 +15,7 @@ class HomeProvider extends ChangeNotifier {
 
   HomeProvider({required this.context}) {
     _dio.options.baseUrl = "https://timenudgeservice.onrender.com/";
-    print("Results");
+
     result();
   }
   Future<void> result() async {
@@ -25,7 +25,6 @@ class HomeProvider extends ChangeNotifier {
     }
 
     notifyListeners();
-    print(datalist);
   }
 
   String getQuestion() {
