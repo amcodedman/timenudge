@@ -53,6 +53,8 @@ Thank you for choosing Timenude to revolutionize your scheduling and task manage
 
 ![photo_2023-08-08_08-30-02](https://github.com/amcodedman/timenudge/assets/136466838/74b75095-f2c3-4afa-8054-4141a19940fe)
 
+![photo_2023-08-08_08-44-14](https://github.com/amcodedman/timenudge/assets/136466838/180c839c-7da7-44f9-925c-522fe4a6e2a8)
+
 ![photo_2023-08-08_08-29-35](https://github.com/amcodedman/timenudge/assets/136466838/cbf3d07f-ab2f-4b73-8c54-d63bd8df51e0)
 
 ---
