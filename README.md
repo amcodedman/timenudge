@@ -50,6 +50,11 @@ If you encounter any issues, need assistance, or want to provide feedback, our s
 
 Thank you for choosing Timenude to revolutionize your scheduling and task management. With our cross-platform capabilities, advanced features, and commitment to seamless user experience, we're confident Timenude will enhance your productivity and organization. Happy scheduling! 🗓️📲🚀
 
+
+![photo_2023-08-08_08-30-02](https://github.com/amcodedman/timenudge/assets/136466838/74b75095-f2c3-4afa-8054-4141a19940fe)
+
+![photo_2023-08-08_08-29-35](https://github.com/amcodedman/timenudge/assets/136466838/cbf3d07f-ab2f-4b73-8c54-d63bd8df51e0)
+
 ---
 
 Made with ❤️ by the Badu Tec
